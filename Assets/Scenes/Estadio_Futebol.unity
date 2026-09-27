@@ -879,6 +879,18 @@ PrefabInstance:
       propertyPath: m_AnchorMax.y
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 1643115351821817523, guid: cb1bfe6e6a3c0d9419969835f527a584, type: 3}
+      propertyPath: m_Color.b
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1643115351821817523, guid: cb1bfe6e6a3c0d9419969835f527a584, type: 3}
+      propertyPath: m_Color.g
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1643115351821817523, guid: cb1bfe6e6a3c0d9419969835f527a584, type: 3}
+      propertyPath: m_Color.r
+      value: 0.17054713
+      objectReference: {fileID: 0}
     - target: {fileID: 1913329971996180775, guid: cb1bfe6e6a3c0d9419969835f527a584, type: 3}
       propertyPath: m_AnchorMax.y
       value: 0
@@ -887,13 +899,29 @@ PrefabInstance:
       propertyPath: m_Name
       value: Inimigo_perseguidor
       objectReference: {fileID: 0}
+    - target: {fileID: 3791511668900035059, guid: cb1bfe6e6a3c0d9419969835f527a584, type: 3}
+      propertyPath: m_Color.b
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3791511668900035059, guid: cb1bfe6e6a3c0d9419969835f527a584, type: 3}
+      propertyPath: m_Color.g
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3791511668900035059, guid: cb1bfe6e6a3c0d9419969835f527a584, type: 3}
+      propertyPath: m_Color.r
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 4756503882140943108, guid: cb1bfe6e6a3c0d9419969835f527a584, type: 3}
       propertyPath: m_SizeDelta.x
-      value: 10
+      value: 50
       objectReference: {fileID: 0}
     - target: {fileID: 4756503882140943108, guid: cb1bfe6e6a3c0d9419969835f527a584, type: 3}
       propertyPath: m_SizeDelta.y
-      value: 50
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4756503882140943108, guid: cb1bfe6e6a3c0d9419969835f527a584, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 0.1
       objectReference: {fileID: 0}
     - target: {fileID: 5390265050270458778, guid: cb1bfe6e6a3c0d9419969835f527a584, type: 3}
       propertyPath: m_LocalPosition.x
@@ -934,6 +962,14 @@ PrefabInstance:
     - target: {fileID: 5390265050270458778, guid: cb1bfe6e6a3c0d9419969835f527a584, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6218430167187647613, guid: cb1bfe6e6a3c0d9419969835f527a584, type: 3}
+      propertyPath: m_SizeDelta.x
+      value: 50
+      objectReference: {fileID: 0}
+    - target: {fileID: 6218430167187647613, guid: cb1bfe6e6a3c0d9419969835f527a584, type: 3}
+      propertyPath: m_SizeDelta.y
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 6981141549653372056, guid: cb1bfe6e6a3c0d9419969835f527a584, type: 3}
       propertyPath: m_AnchorMax.y

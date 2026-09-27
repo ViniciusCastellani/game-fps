@@ -9,7 +9,6 @@ public class BarraVidaInimigo : MonoBehaviour
 
     void Start()
     {
-        Debug.Log("Load Barra Inimigo");
         inimigoVida = GetComponentInParent<InimigoVida>();
 
         barra.maxValue = inimigoVida.vida;
@@ -18,7 +17,6 @@ public class BarraVidaInimigo : MonoBehaviour
 
     public void AtualizarBarra()
     {
-        Debug.Log("Update Barra Inimigo");
         barra.value = inimigoVida.vida;
     }
 }
