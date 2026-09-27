@@ -36,7 +36,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 160, y: 20}
+  m_SizeDelta: {x: 50, y: 1}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &5111383722744531634
 MonoBehaviour:
@@ -147,7 +147,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_Color: {r: 1, g: 0, b: 0, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -283,7 +283,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2971115017558065501}
   serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 36.1, y: 0.21, z: -2.77}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -464,6 +464,11 @@ MonoBehaviour:
   audioMorte: {fileID: 8300000, guid: 0777ccd6e42604a41b7b5ff165fdd394, type: 3}
   offsetParticulaMorte: {x: 0, y: 1, z: 0}
   barraVida: {fileID: 5154178692712421365}
+  prefabMedkit: {fileID: 0}
+  prefabMunicao: {fileID: 0}
+  chanceDeDrop: 0.5
+  pontosAoMorrer: 10
+  gerenciadorDeOrdas: {fileID: 0}
 --- !u!1 &3178069824548918605
 GameObject:
   m_ObjectHideFlags: 0
@@ -650,7 +655,7 @@ RectTransform:
   m_GameObject: {fileID: 6185982141375395017}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 0.1, y: 0, z: 0.1}
+  m_LocalScale: {x: 0.1, y: 0.1, z: 0.1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 6218430167187647613}
@@ -659,7 +664,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 0, y: 2.2}
-  m_SizeDelta: {x: 3, y: 5}
+  m_SizeDelta: {x: 50, y: 1}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!223 &7387603585511439164
 Canvas:
@@ -713,6 +718,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::BarraVidaInimigo
   barra: {fileID: 5111383722744531634}
+  imagemDePreenchimento: {fileID: 0}
+  corVidaCheia: {r: 0, g: 1, b: 0, a: 1}
+  corVidaBaixa: {r: 1, g: 0, b: 0, a: 1}
 --- !u!1 &6387739234823762585
 GameObject:
   m_ObjectHideFlags: 0
@@ -1045,7 +1053,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_Color: {r: 0.17054713, g: 1, b: 0, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
