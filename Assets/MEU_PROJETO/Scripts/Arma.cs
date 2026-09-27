@@ -8,15 +8,32 @@ public class Arma : MonoBehaviour
     public AudioSource audioFonte;
     public AudioClip somDoTiro;
 
+    public int capacidadePente = 30;
+    public int municaoAtual = 30;
+    public int municaoReserva = 90;
+
     void Update()
     {
         if (Input.GetButtonDown("Fire1"))
         {
             Atirar();
         }
+
+        if (Input.GetKeyDown(KeyCode.R))
+        {
+            Recarregar();
+        }
     }
     void Atirar()
     {
+        if (municaoAtual <= 0)
+        {
+            Debug.Log("Sem munição!");
+            return;
+        }
+        
+        municaoAtual--;
+
         audioFonte.PlayOneShot(somDoTiro);
         // cria um raio invisível que começa na posição da câmera; segue para a direção em que a câmera está olhando;
         Ray raio = new Ray(cameraJogador.transform.position, cameraJogador.transform.forward);
@@ -39,5 +56,39 @@ public class Arma : MonoBehaviour
         {
             vida.ReceberDano(dano);
         }
+    }
+
+    void Recarregar()
+    {
+        // Não recarrega se o pente já estiver cheio
+        if (municaoAtual >= capacidadePente)
+        {
+            return;
+        }
+
+        // Não recarrega se não houver munição reserva
+        if (municaoReserva <= 0)
+        {
+            return;
+        }
+
+        int quantidadeNecessaria = capacidadePente - municaoAtual;
+
+        // Se a reserva tiver menos munição do que o necessário,
+        // utiliza somente o que estiver disponível.
+        int quantidadeRecarregada = Mathf.Min(
+            quantidadeNecessaria,
+            municaoReserva
+        );
+
+        municaoAtual += quantidadeRecarregada;
+        municaoReserva -= quantidadeRecarregada;
+
+        Debug.Log(
+            "Munição: "
+            + municaoAtual
+            + "/"
+            + municaoReserva
+        );
     }
 }
