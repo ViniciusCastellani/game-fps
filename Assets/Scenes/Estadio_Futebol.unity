@@ -875,9 +875,25 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1540910652}
     m_Modifications:
+    - target: {fileID: 1575353875119935795, guid: cb1bfe6e6a3c0d9419969835f527a584, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1913329971996180775, guid: cb1bfe6e6a3c0d9419969835f527a584, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 2971115017558065501, guid: cb1bfe6e6a3c0d9419969835f527a584, type: 3}
       propertyPath: m_Name
       value: Inimigo_perseguidor
+      objectReference: {fileID: 0}
+    - target: {fileID: 4756503882140943108, guid: cb1bfe6e6a3c0d9419969835f527a584, type: 3}
+      propertyPath: m_SizeDelta.x
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 4756503882140943108, guid: cb1bfe6e6a3c0d9419969835f527a584, type: 3}
+      propertyPath: m_SizeDelta.y
+      value: 50
       objectReference: {fileID: 0}
     - target: {fileID: 5390265050270458778, guid: cb1bfe6e6a3c0d9419969835f527a584, type: 3}
       propertyPath: m_LocalPosition.x
@@ -917,6 +933,14 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5390265050270458778, guid: cb1bfe6e6a3c0d9419969835f527a584, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6981141549653372056, guid: cb1bfe6e6a3c0d9419969835f527a584, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8903414003182627574, guid: cb1bfe6e6a3c0d9419969835f527a584, type: 3}
+      propertyPath: m_AnchorMax.y
       value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []

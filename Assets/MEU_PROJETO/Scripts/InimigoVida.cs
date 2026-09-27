@@ -9,11 +9,18 @@ public class InimigoVida : MonoBehaviour
 
     public Vector3 offsetParticulaMorte;
 
+    public BarraVidaInimigo barraVida;
+
     public void ReceberDano(int dano)
     {
         vida -= dano;
 
         Debug.Log(gameObject.name + " recebeu " + dano + " de dano.");
+        
+        if (barraVida != null)
+        {
+            barraVida.AtualizarBarra();
+        }
 
         if (vida <= 0)
         {
