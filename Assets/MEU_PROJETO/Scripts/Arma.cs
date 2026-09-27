@@ -31,7 +31,7 @@ public class Arma : MonoBehaviour
             Debug.Log("Sem munição!");
             return;
         }
-        
+
         municaoAtual--;
 
         audioFonte.PlayOneShot(somDoTiro);
@@ -90,5 +90,21 @@ public class Arma : MonoBehaviour
             + "/"
             + municaoReserva
         );
+    }
+
+    // Chamado pelo script de pickup (Municao.cs) quando o jogador
+    // coleta uma caixa de munição no chão.
+    public void AdicionarMunicao(int quantidade)
+    {
+        municaoReserva += quantidade;
+
+        Debug.Log("Munição reserva: " + municaoReserva);
+    }
+
+    // Chamado pela LojaDeUpgrades quando o jogador gasta pontos
+    // para aumentar a capacidade do pente.
+    public void AumentarCapacidadeDoPente(int quantidade)
+    {
+        capacidadePente += quantidade;
     }
 }
