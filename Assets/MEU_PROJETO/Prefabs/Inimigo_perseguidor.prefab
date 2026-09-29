@@ -329,7 +329,7 @@ AudioSource:
   m_audioClip: {fileID: 0}
   m_Resource: {fileID: 0}
   m_PlayOnAwake: 1
-  m_Volume: 1
+  m_Volume: 0.48
   m_Pitch: 1
   Loop: 0
   Mute: 0
@@ -486,7 +486,7 @@ MonoBehaviour:
   dano: 10
   tempoEntreAtaques: 1.5
   fonteDeAudio: {fileID: 4398003923081720652}
-  somDeAtaque: {fileID: 0}
+  somDeAtaque: {fileID: 8300000, guid: 384b9d792374c714a8ec14cddd7d655e, type: 3}
 --- !u!1 &3178069824548918605
 GameObject:
   m_ObjectHideFlags: 0

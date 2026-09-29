@@ -149,4 +149,4 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Medkit
   quantidadeDeCura: 25
-  somDeColeta: {fileID: 0}
+  somDeColeta: {fileID: 8300000, guid: e3f2878077c0fb947ab86e343bf64554, type: 3}

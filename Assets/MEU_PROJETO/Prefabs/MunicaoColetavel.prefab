@@ -1053,7 +1053,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Municao
   quantidadeDeMunicao: 30
-  somDeColeta: {fileID: 0}
+  somDeColeta: {fileID: 8300000, guid: 1c689e3b11868cf46adf6c8e38fdcfc0, type: 3}
 --- !u!1 &5199805534795952703
 GameObject:
   m_ObjectHideFlags: 0

@@ -1,4 +1,6 @@
 using UnityEngine;
+using System.Collections;
+
 public class Arma : MonoBehaviour
 {
     public Camera cameraJogador;
@@ -7,13 +9,23 @@ public class Arma : MonoBehaviour
 
     public AudioSource audioFonte;
     public AudioClip somDoTiro;
+    public AudioClip somDePenteVazio;
+    public AudioClip somDeRecarga;
 
     public int capacidadePente = 30;
     public int municaoAtual = 30;
     public int municaoReserva = 90;
 
+    // Enquanto está recarregando, não pode atirar nem começar outra recarga.
+    private bool recarregando = false;
+
     void Update()
     {
+        if (recarregando)
+        {
+            return;
+        }
+
         if (Input.GetButtonDown("Fire1"))
         {
             Atirar();
@@ -24,10 +36,12 @@ public class Arma : MonoBehaviour
             Recarregar();
         }
     }
+
     void Atirar()
     {
         if (municaoAtual <= 0)
         {
+            audioFonte.PlayOneShot(somDePenteVazio);
             Debug.Log("Sem munição!");
             return;
         }
@@ -72,6 +86,21 @@ public class Arma : MonoBehaviour
             return;
         }
 
+        StartCoroutine(RecarregarComCooldown());
+    }
+
+    IEnumerator RecarregarComCooldown()
+    {
+        recarregando = true;
+
+        audioFonte.PlayOneShot(somDeRecarga);
+
+        // Espera o som de recarga terminar antes de somar a munição de verdade.
+        if (somDeRecarga != null)
+        {
+            yield return new WaitForSeconds(somDeRecarga.length);
+        }
+
         int quantidadeNecessaria = capacidadePente - municaoAtual;
 
         // Se a reserva tiver menos munição do que o necessário,
@@ -90,6 +119,8 @@ public class Arma : MonoBehaviour
             + "/"
             + municaoReserva
         );
+
+        recarregando = false;
     }
 
     // Chamado pelo script de pickup (Municao.cs) quando o jogador

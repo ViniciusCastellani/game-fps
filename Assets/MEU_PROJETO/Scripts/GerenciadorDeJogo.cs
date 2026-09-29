@@ -98,6 +98,12 @@ public class GerenciadorDeJogo : MonoBehaviour
 
         MudarEstado(EstadoDoJogo.GameOver);
         TocarSom(somDeGameOver);
+
+        // Fim de jogo de verdade: a música principal para.
+        if (MusicaDoJogo.instancia != null)
+        {
+            MusicaDoJogo.instancia.Parar();
+        }
     }
 
     // Chamado pelo GerenciadorDeOrdas quando todos os inimigos da orda morrem.
@@ -112,6 +118,13 @@ public class GerenciadorDeJogo : MonoBehaviour
         {
             textoDescricaoVitoria.text = "VOCÊ VENCEU!\nTodas as fases foram concluídas.";
             textoBotaoProximaFase.text = "Jogar Novamente";
+
+            // Só para a música na vitória FINAL — nas fases intermediárias
+            // ela continua tocando, porque o jogo ainda não acabou.
+            if (MusicaDoJogo.instancia != null)
+            {
+                MusicaDoJogo.instancia.Parar();
+            }
         }
         else
         {
