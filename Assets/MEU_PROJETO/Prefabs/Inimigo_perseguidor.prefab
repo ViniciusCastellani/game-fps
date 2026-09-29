@@ -268,6 +268,7 @@ GameObject:
   - component: {fileID: 7765680107790254753}
   - component: {fileID: 1377789329308672036}
   - component: {fileID: 2171928133463234190}
+  - component: {fileID: 602544677616699085}
   m_Layer: 0
   m_Name: Inimigo_perseguidor
   m_TagString: Inimigo
@@ -464,11 +465,28 @@ MonoBehaviour:
   audioMorte: {fileID: 8300000, guid: 0777ccd6e42604a41b7b5ff165fdd394, type: 3}
   offsetParticulaMorte: {x: 0, y: 1, z: 0}
   barraVida: {fileID: 5154178692712421365}
-  prefabMedkit: {fileID: 0}
-  prefabMunicao: {fileID: 0}
+  prefabMedkit: {fileID: 2570095583279758076, guid: 916a4ec3e50f5954982d42cc22d508fb, type: 3}
+  prefabMunicao: {fileID: 5107571238699567075, guid: 625151b0cbf6f4b44a992d43a4f7ac4c, type: 3}
   chanceDeDrop: 0.5
   pontosAoMorrer: 10
   gerenciadorDeOrdas: {fileID: 0}
+--- !u!114 &602544677616699085
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2971115017558065501}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d7f29c1c03caa1b418514a990d0616e7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::InimigoAtaque
+  alcanceDeAtaque: 1.5
+  dano: 10
+  tempoEntreAtaques: 1.5
+  fonteDeAudio: {fileID: 4398003923081720652}
+  somDeAtaque: {fileID: 0}
 --- !u!1 &3178069824548918605
 GameObject:
   m_ObjectHideFlags: 0

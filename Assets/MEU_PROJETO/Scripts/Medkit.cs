@@ -1,6 +1,6 @@
 using UnityEngine;
 
-// Coloque esse script no prefab do medkit.
+// Coloque esse script no prefab do medkit (o coletável, não a estação).
 // O objeto precisa de um Collider marcado como "Is Trigger".
 public class Medkit : MonoBehaviour
 {
@@ -23,6 +23,12 @@ public class Medkit : MonoBehaviour
         }
 
         if (vidaDoJogador == null)
+        {
+            return;
+        }
+
+        // Se a vida já está cheia, não coleta — o medkit continua no chão.
+        if (vidaDoJogador.vidaAtual >= vidaDoJogador.vidaMaxima)
         {
             return;
         }
