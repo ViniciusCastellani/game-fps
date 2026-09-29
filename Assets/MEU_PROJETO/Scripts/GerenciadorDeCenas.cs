@@ -18,7 +18,7 @@ public class GerenciadorDeCenas : MonoBehaviour
     public void ProximaFase()
     {
         Debug.Log("Gerenciar Cenas Jogar" + nomeDaProximaFase);
-        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+        SceneManager.LoadScene(nomeDaProximaFase);
     }
     
     public void ReiniciarFase()
