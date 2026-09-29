@@ -5,15 +5,9 @@ public class GerenciadorDeCenas : MonoBehaviour
 {
     public string nomeDaProximaFase;
     public string nomeDaTelaInicial;
-    public GameObject telaDePause;
-    
-    private void Update()
-    {
-        if (Input.GetKeyDown(KeyCode.Escape) | Input.GetKeyDown(KeyCode.P))
-        {
-            PausarJogo();
-        }
-    }
+
+    // O pause agora é controlado pelo GerenciadorDeJogo (estados + Time.timeScale).
+    // Este script cuida só da troca de cenas.
 
     public void ProximaFase()
     {
@@ -29,18 +23,6 @@ public class GerenciadorDeCenas : MonoBehaviour
     public void VoltarParaTelaInicial()
     {
         SceneManager.LoadScene(nomeDaTelaInicial);
-    }
-
-    public void PausarJogo()
-    {
-        telaDePause.SetActive(true);
-        Time.timeScale = 0f; // para o tempo
-    }
-    
-    public void ContinuarJogo()
-    {
-        telaDePause.SetActive(false);
-        Time.timeScale = 1f; // volta pro tempo normal
     }
 
     public void Sair()

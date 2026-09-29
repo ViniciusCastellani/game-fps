@@ -19,26 +19,56 @@ public class GerenciadorDeOrdas : MonoBehaviour
     public Transform[] pontosDeSpawn;
 
     public TMP_Text textoOrda;
+
+    // Tempo de preparação depois de clicar em "Próxima Fase".
     public float tempoEntreOrdas = 5f;
+
+    // Cada orda é uma fase do jogo.
+    [SerializeField] private GerenciadorDeJogo gerenciadorDeJogo;
+    [SerializeField] private Cronometro cronometro;
+
+    // "static" sobrevive ao recarregamento da cena: é assim que o botão
+    // "Reiniciar" do Game Over volta para a mesma orda em que o jogador perdeu.
+    private static int ordaParaIniciar = 0;
 
     private int ordaAtual = 0;
     private int inimigosVivos = 0;
 
+    public int NumeroDaOrdaAtual
+    {
+        get { return ordaAtual + 1; }
+    }
+
+    public bool EhUltimaOrda
+    {
+        get { return ordaAtual >= ordas.Length - 1; }
+    }
+
     void Start()
     {
+        ordaAtual = ordaParaIniciar;
+        ordaParaIniciar = 0; // próxima vez que a cena abrir (ex: vindo do menu) começa na orda 1
+
         IniciarOrda(ordaAtual);
+    }
+
+    // Chamado pelo GerenciadorDeJogo antes de recarregar a cena no Game Over.
+    public void ReiniciarNaOrdaAtual()
+    {
+        ordaParaIniciar = ordaAtual;
+    }
+
+    // Chamado pelo GerenciadorDeJogo no botão "Próxima Fase".
+    public void IniciarProximaOrda()
+    {
+        ordaAtual++;
+        StartCoroutine(EsperarProximaOrda());
     }
 
     void IniciarOrda(int indiceOrda)
     {
-        if (indiceOrda >= ordas.Length)
-        {
-            AtualizarTexto("VOCÊ VENCEU! Todas as ordas foram derrotadas.");
-            Debug.Log("Todas as ordas foram concluídas!");
-            return;
-        }
-
         AtualizarTexto("ORDA " + (indiceOrda + 1) + " / " + ordas.Length);
+        cronometro.Iniciar();
 
         Orda orda = ordas[indiceOrda];
         inimigosVivos = orda.prefabsInimigos.Length;
@@ -69,14 +99,14 @@ public class GerenciadorDeOrdas : MonoBehaviour
 
         if (inimigosVivos <= 0)
         {
-            ordaAtual++;
-            StartCoroutine(EsperarProximaOrda());
+            cronometro.Parar();
+            gerenciadorDeJogo.Vitoria();
         }
     }
 
     IEnumerator EsperarProximaOrda()
     {
-        AtualizarTexto("ORDA CONCLUÍDA! Próxima em " + tempoEntreOrdas + "s...");
+        AtualizarTexto("PREPARE-SE! ORDA " + (ordaAtual + 1) + " em " + tempoEntreOrdas + "s...");
 
         yield return new WaitForSeconds(tempoEntreOrdas);
 

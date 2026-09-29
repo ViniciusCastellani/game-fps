@@ -5,6 +5,8 @@ public class JogadorVida : MonoBehaviour
     public int vidaMaxima = 100;
     public int vidaAtual;
 
+    [SerializeField] private GerenciadorDeJogo gerenciadorDeJogo;
+
     void Start()
     {
         vidaAtual = vidaMaxima;
@@ -42,5 +44,11 @@ public class JogadorVida : MonoBehaviour
     void Morrer()
     {
         Debug.Log("Jogador morreu.");
+
+        // Pode ficar vazio em uma cena de teste sem GerenciadorDeJogo.
+        if (gerenciadorDeJogo != null)
+        {
+            gerenciadorDeJogo.GameOver("SUA VIDA CHEGOU A ZERO!");
+        }
     }
 }
