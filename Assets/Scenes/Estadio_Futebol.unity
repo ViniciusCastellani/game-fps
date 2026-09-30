@@ -5903,8 +5903,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 1, y: 0}
   m_AnchorMax: {x: 1, y: 0}
-  m_AnchoredPosition: {x: -228.03998, y: 47.119995}
-  m_SizeDelta: {x: 456.08, y: 63.771}
+  m_AnchoredPosition: {x: -259.51996, y: 47.119995}
+  m_SizeDelta: {x: 519.04, y: 63.771}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1861396906
 MonoBehaviour:
@@ -5926,7 +5926,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 'Municao: 30/90'
+  m_text: "MUNI\xC7\xC3O: 30/90"
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -7205,6 +7205,10 @@ PrefabInstance:
     - target: {fileID: 2482003407062098776, guid: 8a3fcdf5c51b33940b28fa590f435de3, type: 3}
       propertyPath: m_Name
       value: Jogador
+      objectReference: {fileID: 0}
+    - target: {fileID: 2868984139835799931, guid: 8a3fcdf5c51b33940b28fa590f435de3, type: 3}
+      propertyPath: alcance
+      value: 200
       objectReference: {fileID: 0}
     - target: {fileID: 2868984139835799931, guid: 8a3fcdf5c51b33940b28fa590f435de3, type: 3}
       propertyPath: somDeRecarga

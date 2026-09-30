@@ -484,9 +484,16 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::InimigoAtaque
   alcanceDeAtaque: 1.5
+  histerese: 0.5
+  pontoDoGolpe: {fileID: 0}
+  alcanceDoGolpe: 2
+  anguloDoGolpe: 120
+  toleranciaVertical: 1.5
   dano: 10
-  tempoEntreAtaques: 1.5
   atrasoDoDano: 0.4
+  duracaoDaAnimacao: 1.5
+  tempoEntreAtaques: 1.5
+  velocidadeDeGiro: 8
   fonteDeAudio: {fileID: 4398003923081720652}
   somDeAtaque: {fileID: 8300000, guid: 384b9d792374c714a8ec14cddd7d655e, type: 3}
   animator: {fileID: 8271457946663828802}
