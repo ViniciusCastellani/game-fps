@@ -9,6 +9,7 @@ public class GerenciadorDeJogo : MonoBehaviour
     {
         Jogando,
         Pausado,
+        Tutorial,
         GameOver,
         Vitoria
     }
@@ -17,11 +18,20 @@ public class GerenciadorDeJogo : MonoBehaviour
     [SerializeField] private GameObject telaDePause;
     [SerializeField] private GameObject telaDeGameOver;
     [SerializeField] private GameObject telaDeVitoria;
+    [SerializeField] private GameObject telaDeTutorial;
 
     [Header("Textos que mudam durante o jogo")]
     [SerializeField] private TMP_Text textoMotivoGameOver;
     [SerializeField] private TMP_Text textoDescricaoVitoria;
     [SerializeField] private TMP_Text textoBotaoProximaFase;
+    [SerializeField] private TMP_Text textoPontuacaoVitoria;
+    [SerializeField] private TMP_Text textoPontuacaoGameOver;
+
+    [Header("Tutorial")]
+    [Tooltip("Abre a tela de comandos assim que a partida começa.")]
+    [SerializeField] private bool mostrarTutorialAoIniciar = true;
+    [Tooltip("Tecla que reabre a tela de comandos durante o jogo.")]
+    [SerializeField] private KeyCode teclaDoTutorial = KeyCode.T;
 
     [Header("Referências")]
     [SerializeField] private GerenciadorDeOrdas gerenciadorDeOrdas;
@@ -43,13 +53,25 @@ public class GerenciadorDeJogo : MonoBehaviour
         get { return Estado == EstadoDoJogo.Jogando; }
     }
 
+    // Para onde voltar quando o tutorial fechar: ele pode ser aberto no começo
+    // da partida (volta para Jogando) ou a partir da tela de pause (volta para Pausado).
+    private EstadoDoJogo estadoAntesDoTutorial = EstadoDoJogo.Jogando;
+
     void Start()
     {
-        MudarEstado(EstadoDoJogo.Jogando);
+        bool comTutorial = mostrarTutorialAoIniciar && telaDeTutorial != null;
+
+        MudarEstado(comTutorial ? EstadoDoJogo.Tutorial : EstadoDoJogo.Jogando);
     }
 
     void Update()
     {
+        if (Input.GetKeyDown(teclaDoTutorial))
+        {
+            AbrirTutorial();
+            return;
+        }
+
         if (!Input.GetKeyDown(KeyCode.Escape))
         {
             return;
@@ -63,6 +85,36 @@ public class GerenciadorDeJogo : MonoBehaviour
         else if (Estado == EstadoDoJogo.Pausado)
         {
             Continuar();
+        }
+        else if (Estado == EstadoDoJogo.Tutorial)
+        {
+            FecharTutorial();
+        }
+    }
+
+    // Botão "Como Jogar" / tecla do tutorial.
+    public void AbrirTutorial()
+    {
+        if (telaDeTutorial == null)
+        {
+            return;
+        }
+
+        if (Estado != EstadoDoJogo.Jogando && Estado != EstadoDoJogo.Pausado)
+        {
+            return;
+        }
+
+        estadoAntesDoTutorial = Estado;
+        MudarEstado(EstadoDoJogo.Tutorial);
+    }
+
+    // Botão "Começar" / "Entendi" da tela de tutorial.
+    public void FecharTutorial()
+    {
+        if (Estado == EstadoDoJogo.Tutorial)
+        {
+            MudarEstado(estadoAntesDoTutorial);
         }
     }
 
@@ -95,6 +147,8 @@ public class GerenciadorDeJogo : MonoBehaviour
         {
             textoMotivoGameOver.text = motivo;
         }
+
+        EscreverPontuacao(textoPontuacaoGameOver);
 
         MudarEstado(EstadoDoJogo.GameOver);
         TocarSom(somDeGameOver);
@@ -131,6 +185,8 @@ public class GerenciadorDeJogo : MonoBehaviour
             textoDescricaoVitoria.text = "Fase " + gerenciadorDeOrdas.NumeroDaOrdaAtual + " concluída!";
             textoBotaoProximaFase.text = "Próxima Fase";
         }
+
+        EscreverPontuacao(textoPontuacaoVitoria);
 
         MudarEstado(EstadoDoJogo.Vitoria);
         TocarSom(somDeVitoria);
@@ -184,9 +240,10 @@ public class GerenciadorDeJogo : MonoBehaviour
         Cursor.lockState = jogando ? CursorLockMode.Locked : CursorLockMode.None;
         Cursor.visible = !jogando;
 
-        telaDePause.SetActive(novoEstado == EstadoDoJogo.Pausado);
-        telaDeGameOver.SetActive(novoEstado == EstadoDoJogo.GameOver);
-        telaDeVitoria.SetActive(novoEstado == EstadoDoJogo.Vitoria);
+        Mostrar(telaDePause, novoEstado == EstadoDoJogo.Pausado);
+        Mostrar(telaDeGameOver, novoEstado == EstadoDoJogo.GameOver);
+        Mostrar(telaDeVitoria, novoEstado == EstadoDoJogo.Vitoria);
+        Mostrar(telaDeTutorial, novoEstado == EstadoDoJogo.Tutorial);
 
         // timeScale = 0 não bloqueia Input.GetButtonDown, então desligamos
         // os scripts do jogador para ele não atirar/pular com o jogo parado.
@@ -197,6 +254,28 @@ public class GerenciadorDeJogo : MonoBehaviour
                 acao.enabled = jogando;
             }
         }
+    }
+
+    // Uma tela pode não existir na cena (ex: cena de teste sem tutorial).
+    void Mostrar(GameObject tela, bool visivel)
+    {
+        if (tela != null)
+        {
+            tela.SetActive(visivel);
+        }
+    }
+
+    // Placar final mostrado nas telas de Vitória e de Game Over.
+    void EscreverPontuacao(TMP_Text destino)
+    {
+        if (destino == null)
+        {
+            return;
+        }
+
+        int pontos = SistemaDePontos.instancia != null ? SistemaDePontos.instancia.pontosAtuais : 0;
+
+        destino.text = "PONTUAÇÃO FINAL: " + pontos;
     }
 
     void TocarSom(AudioClip som)
