@@ -5434,7 +5434,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3407594270955706584, guid: e3a79916e48e3c14baaee9edf4c61abd, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -22.77
+      value: -22.507
       objectReference: {fileID: 0}
     - target: {fileID: 3407594270955706584, guid: e3a79916e48e3c14baaee9edf4c61abd, type: 3}
       propertyPath: m_LocalPosition.z
@@ -5472,6 +5472,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Jogador
       objectReference: {fileID: 0}
+    - target: {fileID: 9012687271463305428, guid: e3a79916e48e3c14baaee9edf4c61abd, type: 3}
+      propertyPath: gerenciadorDeJogo
+      value: 
+      objectReference: {fileID: 1258318097}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
