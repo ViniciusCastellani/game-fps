@@ -1,12 +1,8 @@
 using UnityEngine;
 using TMPro;
 
-// Coloque esse script em um GameObject vazio na cena (ex: "GerenciadorDePontos"),
-// que deve existir uma única vez por cena.
 public class SistemaDePontos : MonoBehaviour
 {
-    // Acesso simples a partir de qualquer outro script,
-    // sem precisar arrastar referência manualmente em todo lugar.
     public static SistemaDePontos instancia;
 
     public int pontosAtuais;

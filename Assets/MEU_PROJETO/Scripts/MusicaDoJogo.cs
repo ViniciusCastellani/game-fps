@@ -1,9 +1,5 @@
 using UnityEngine;
 
-// Coloque num GameObject vazio na cena Estadio_Futebol (ex: "MusicaDoJogo"),
-// com um Audio Source. Deixe "Play On Awake" DESMARCADO no Audio Source —
-// esse script já cuida de tocar sozinho quando a partida começa, e de
-// parar sozinho quando o jogo termina (vitória ou derrota).
 public class MusicaDoJogo : MonoBehaviour
 {
     public static MusicaDoJogo instancia;
@@ -33,7 +29,6 @@ public class MusicaDoJogo : MonoBehaviour
         fonteDeAudio.Play();
     }
 
-    // Só toca se já não estiver tocando (não reinicia a música do começo).
     public void GarantirTocando()
     {
         if (fonteDeAudio != null && !fonteDeAudio.isPlaying)

@@ -2,16 +2,13 @@ using UnityEngine;
 using UnityEngine.AI;
 public class InimigoPatrulheiroAtaque : MonoBehaviour
 {
-    // variaveis de Patrulha
     public Transform[] pontosDePatrulha;
     private int indice;
     private NavMeshAgent agenteInimigo;
-    // variaveis de Ataque
     private Transform jogador;
     private float distanciaDoJogador;
     private bool jogadorDetectado = false;
     public float visaoDoInimigo = 10f;
-    // variaveis quando o Jogador for Detectado
     public GameObject iconeAlvoDetectado;
     private AudioSource audioPlayer;
     public AudioClip audioAlvoDetectado;
@@ -39,7 +36,6 @@ public class InimigoPatrulheiroAtaque : MonoBehaviour
         distanciaDoJogador = Vector3.Distance(transform.position,
         jogador.position);
 
-        // Se o jogador estiver no campo de visão
         if (distanciaDoJogador <= visaoDoInimigo)
         {
             jogadorDetectado = true;
@@ -50,7 +46,6 @@ public class InimigoPatrulheiroAtaque : MonoBehaviour
                 audioJaTocou = true;
             }
         }
-        // Se o jogador estiver fora do campo de visão
         else if (distanciaDoJogador >= visaoDoInimigo)
         {
             jogadorDetectado = false;
@@ -60,22 +55,16 @@ public class InimigoPatrulheiroAtaque : MonoBehaviour
     }
     void Atacar()
     {
-        // Parte para cima do Jogador
         agenteInimigo.SetDestination(jogador.position);
     }
     void Patrulhar()
     {
-        // Se a distancia do Inimigo ate o destino for menor q 1,
-        // ou seja, ainda não chegou
         if (agenteInimigo.remainingDistance < 1)
         {
-            // Se o indice do vetor de pontosDePatrulha for igual
-            // ao total de pontosDePatrulha, ou seja terminou a ronda
             if (indice >= pontosDePatrulha.Length - 1)
-                indice = 0; // reinicia a rota
+                indice = 0;
             else
-                indice++; // vai para o proximo pontoDePatrulha
-                          // seta o destino como o proximo pontoDePatrulha
+                indice++;
             agenteInimigo.SetDestination(pontosDePatrulha[indice].position);
         }
     }

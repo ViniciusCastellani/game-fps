@@ -18,12 +18,8 @@ public class InimigoVida : MonoBehaviour
     [Range(0f, 1f)]
     public float chanceDeDrop = 0.5f;
 
-    // Quantos pontos esse inimigo dá ao morrer.
     public int pontosAoMorrer = 10;
 
-    // Preenchido automaticamente pelo GerenciadorDeOrdas quando ele
-    // instancia esse inimigo. Pode ficar vazio (null) sem problema,
-    // por exemplo em uma cena de teste sem ordas.
     [HideInInspector]
     public GerenciadorDeOrdas gerenciadorDeOrdas;
 

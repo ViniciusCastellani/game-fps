@@ -1,10 +1,5 @@
 using UnityEngine;
 
-// Coloque esse script no jogador (ou em um GameObject de UI), e arraste
-// as referências de JogadorVida e Arma no Inspector.
-// Por padrão funciona com teclas (1, 2, 3); se depois você criar botões
-// de UI, pode chamar CurarTotalmente(), AumentarDano() e
-// AumentarCapacidadeDoPente() direto no OnClick de cada botão.
 public class LojaDeUpgrades : MonoBehaviour
 {
     public JogadorVida jogadorVida;

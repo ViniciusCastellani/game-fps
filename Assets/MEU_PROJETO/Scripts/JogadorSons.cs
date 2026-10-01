@@ -1,7 +1,5 @@
 using UnityEngine;
 
-// Coloque no Jogador (junto do Rigidbody, JogadorMovimento e JogadorPulo).
-// Só LÊ os dados do movimento: não altera nenhuma lógica existente.
 [RequireComponent(typeof(Rigidbody))]
 public class JogadorSons : MonoBehaviour
 {
@@ -29,7 +27,6 @@ public class JogadorSons : MonoBehaviour
         rb = GetComponent<Rigidbody>();
         pulo = GetComponent<JogadorPulo>();
 
-        // Fonte própria (num filho) em 2D: som do próprio jogador, sem distância.
         GameObject filho = new GameObject("SomDoJogador");
         filho.transform.SetParent(transform, false);
 
@@ -43,21 +40,17 @@ public class JogadorSons : MonoBehaviour
     {
         bool noChao = pulo != null ? pulo.estaNoChao : true;
 
-        // PULO: apertou o botão enquanto estava no chão (no frame anterior).
-        // Usa o estado do frame anterior porque o JogadorPulo já pode ter
-        // marcado estaNoChao = false neste mesmo frame.
         if (Input.GetButtonDown("Jump") && estavaNoChao)
         {
             Tocar(somDePulo);
         }
 
-        // PASSOS: só no chão e só se estiver realmente se movendo.
         Vector3 v = rb.linearVelocity;
         float velocidadeHorizontal = new Vector2(v.x, v.z).magnitude;
 
         if (noChao && velocidadeHorizontal > velocidadeMinima && Time.time >= proximoPassoEm)
         {
-            bool correndo = Input.GetButton("Fire3"); // Shift, igual ao JogadorMovimento
+            bool correndo = Input.GetButton("Fire3");
 
             TocarPasso(correndo ? passosCorrendo : passosAndando);
             proximoPassoEm = Time.time + (correndo ? intervaloCorrendo : intervaloAndando);

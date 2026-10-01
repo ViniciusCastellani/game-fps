@@ -9,17 +9,8 @@ using UnityEditor.Events;
 using UnityEditor.SceneManagement;
 using TMPro;
 
-// Ferramenta de Editor (fica na pasta "Editor", então NÃO vai para o build).
-// Aparece no menu "Jogo" da barra superior da Unity.
-//
-// Reconstrói, na cena de gameplay aberta, as telas de Tutorial, Vitória e Game Over
-// usando as ilustrações do personagem, e religa todas as referências do GerenciadorDeJogo.
-//
-// Pode ser executada quantas vezes quiser: as telas antigas são apagadas e refeitas,
-// então ajustar um valor aqui e rodar de novo é o fluxo de trabalho esperado.
 public static class MontadorDeTelasIlustradas
 {
-    // Mesma resolução de referência da CanvasScaler montada por MontadorDeTelas.
     const float LarguraDaTela = 1920f;
     const float AlturaDaTela = 1080f;
 
@@ -27,8 +18,6 @@ public static class MontadorDeTelasIlustradas
     const string CaminhoVitoria = "Assets/MEU_PROJETO/Imagens/vitoria_confetti.png";
     const string CaminhoDerrota = "Assets/MEU_PROJETO/Imagens/num_vai_da.png";
 
-    // ---------- Paleta ----------
-    // Preto azulado do fundo, dourado do "ZÉ RUELA" e vermelho da derrota.
     static readonly Color CorFundoTutorial = new Color(0.024f, 0.031f, 0.051f, 0.96f);
     static readonly Color CorFundoDerrota = new Color(0.039f, 0.020f, 0.027f, 0.97f);
     static readonly Color CorPainel = new Color(0.055f, 0.078f, 0.125f, 0.96f);
@@ -41,13 +30,11 @@ public static class MontadorDeTelasIlustradas
     static readonly Color CorBadge = new Color(0.078f, 0.110f, 0.161f);
     static readonly Color CorEscurecedor = new Color(0.016f, 0.020f, 0.035f, 0.55f);
 
-    // Botão dourado com texto escuro: é o maior contraste possível sobre os painéis escuros.
     static readonly Color CorBotao = new Color(1f, 0.776f, 0.161f);
     static readonly Color CorBotaoClaro = new Color(1f, 0.859f, 0.420f);
     static readonly Color CorBotaoEscuro = new Color(0.816f, 0.600f, 0.078f);
     static readonly Color CorTextoBotao = new Color(0.063f, 0.075f, 0.110f);
 
-    // Botão secundário: cinza-azulado, para não competir com a ação principal.
     static readonly Color CorBotao2 = new Color(0.157f, 0.196f, 0.267f);
     static readonly Color CorBotao2Claro = new Color(0.231f, 0.286f, 0.376f);
     static readonly Color CorBotao2Escuro = new Color(0.106f, 0.133f, 0.184f);
@@ -88,7 +75,6 @@ public static class MontadorDeTelasIlustradas
             return;
         }
 
-        // As telas antigas somem; as referências são refeitas no final.
         ApagarTela(canvasTelas, "TelaDeTutorial");
         ApagarTela(canvasTelas, "TelaDeVitoria");
         ApagarTela(canvasTelas, "TelaDeGameOver");
@@ -101,7 +87,6 @@ public static class MontadorDeTelasIlustradas
         GameObject telaDeGameOver = MontarTelaDeGameOver(canvasTelas, spriteDerrota, gerenciador,
             out TMP_Text motivoGameOver, out TMP_Text pontuacaoGameOver);
 
-        // ---------- Referências no Inspector ----------
         Ligar(gerenciador, "telaDeTutorial", telaDeTutorial);
         Ligar(gerenciador, "telaDeVitoria", telaDeVitoria);
         Ligar(gerenciador, "telaDeGameOver", telaDeGameOver);
@@ -124,18 +109,12 @@ public static class MontadorDeTelasIlustradas
             + "Salve a cena (Ctrl+S).", "OK");
     }
 
-    // ===================================================================
-    //  TELA DE TUTORIAL
-    // ===================================================================
-
     static GameObject MontarTelaDeTutorial(Transform canvas, Sprite personagem, GerenciadorDeJogo gerenciador)
     {
         GameObject tela = CriarTela(canvas, "TelaDeTutorial", CorFundoTutorial);
 
-        // Personagem à esquerda, sangrando um pouco para fora da tela (é um recorte em PNG).
         CriarImagem(tela.transform, "Personagem", personagem, new Vector2(-620f, -10f), new Vector2(700f, 700f));
 
-        // Painel dos comandos à direita.
         GameObject painel = CriarPainel(tela.transform, "PainelComandos", new Vector2(300f, 60f),
             new Vector2(1180f, 800f), CorPainel, CorOuro);
 
@@ -148,7 +127,6 @@ public static class MontadorDeTelasIlustradas
         CriarBarra(painel.transform, "Separador", new Vector2(0f, 208f), new Vector2(1060f, 2f),
             new Color(CorOuro.r, CorOuro.g, CorOuro.b, 0.30f));
 
-        // Duas colunas: à esquerda o que move o jogador, à direita o que ele faz em combate.
         const float LarguraColuna = 550f;
         const float Passo = 82f;
         const float PrimeiraLinha = 140f;
@@ -199,7 +177,6 @@ public static class MontadorDeTelasIlustradas
         }
     }
 
-    // Uma linha "tecla + descrição". A tecla fica numa plaquinha com borda dourada.
     static void CriarComando(Transform pai, Vector2 posicao, float largura, string tecla, string descricao)
     {
         const float Altura = 56f;
@@ -211,7 +188,6 @@ public static class MontadorDeTelasIlustradas
         rectLinha.anchoredPosition = posicao;
         rectLinha.sizeDelta = new Vector2(largura, Altura);
 
-        // Borda: a imagem de fora é dourada, a de dentro é escura e menor.
         GameObject borda = CriarObjetoUI("Tecla", linha.transform);
         RectTransform rectBorda = borda.GetComponent<RectTransform>();
         rectBorda.anchorMin = new Vector2(0f, 0.5f);
@@ -232,11 +208,9 @@ public static class MontadorDeTelasIlustradas
             Vector2.zero, Vector2.zero, FontStyles.Bold);
         Esticar(textoTecla.rectTransform);
 
-        // Respiro interno para "CLIQUE ESQ." não encostar na borda da plaquinha.
         textoTecla.rectTransform.offsetMin = new Vector2(10f, 0f);
         textoTecla.rectTransform.offsetMax = new Vector2(-10f, 0f);
 
-        // "CLIQUE ESQ." é bem mais largo que "R": o auto-size resolve sem apertar as outras.
         textoTecla.enableAutoSizing = true;
         textoTecla.fontSizeMin = 14f;
         textoTecla.fontSizeMax = 26f;
@@ -252,26 +226,17 @@ public static class MontadorDeTelasIlustradas
         rectDescricao.sizeDelta = new Vector2(largura - LarguraBadge - 16f, Altura);
         textoDescricao.alignment = TextAlignmentOptions.Left;
 
-        // Sem isso as descrições mais longas vazam para fora do painel.
         textoDescricao.textWrappingMode = TextWrappingModes.NoWrap;
         textoDescricao.enableAutoSizing = true;
         textoDescricao.fontSizeMin = 19f;
         textoDescricao.fontSizeMax = 26f;
     }
 
-    // ===================================================================
-    //  TELA DE VITÓRIA
-    // ===================================================================
-
     static GameObject MontarTelaDeVitoria(Transform canvas, Sprite comemoracao, GerenciadorDeJogo gerenciador,
         out TMP_Text descricao, out TMP_Text pontuacao, out TMP_Text rotuloProximaFase)
     {
         GameObject tela = CriarTela(canvas, "TelaDeVitoria", Color.black);
 
-        // A foto cobre a tela inteira sem distorcer (equivale ao "cover" do CSS).
-        // O tamanho é calculado na mão em vez de usar AspectRatioFitter porque o fitter
-        // assume o controle do anchoredPosition, e aqui é justamente o deslocamento
-        // vertical que decide se o rosto do personagem aparece ou fica cortado.
         float proporcao = comemoracao.rect.width / comemoracao.rect.height;
         float largura = Mathf.Max(LarguraDaTela, AlturaDaTela * proporcao);
         float altura = largura / proporcao;
@@ -283,23 +248,18 @@ public static class MontadorDeTelasIlustradas
         rectFundo.pivot = new Vector2(0.5f, 0.5f);
         rectFundo.sizeDelta = new Vector2(largura, altura);
 
-        // A imagem é quadrada e o rosto está no topo dela; a faixa 16:9 visível pega só
-        // o meio. Descer a imagem traz o rosto para dentro da área visível, logo acima
-        // do painel de texto.
         rectFundo.anchoredPosition = new Vector2(0f, -380f);
 
         Image imagemFundo = fundo.AddComponent<Image>();
         imagemFundo.sprite = comemoracao;
         imagemFundo.raycastTarget = false;
 
-        // Escurecedor sobre a foto: sem ele o confete branco engole o texto.
         GameObject escurecedor = CriarObjetoUI("Escurecedor", tela.transform);
         Esticar(escurecedor.GetComponent<RectTransform>());
         Image imagemEscurecedor = escurecedor.AddComponent<Image>();
         imagemEscurecedor.color = CorEscurecedor;
         imagemEscurecedor.raycastTarget = false;
 
-        // Painel na parte de baixo: deixa o rosto do personagem à mostra em cima.
         GameObject painel = CriarPainel(tela.transform, "Caixa", new Vector2(0f, -205f),
             new Vector2(1020f, 520f), CorPainelSobreFoto, CorOuro);
 
@@ -323,16 +283,11 @@ public static class MontadorDeTelasIlustradas
         return tela;
     }
 
-    // ===================================================================
-    //  TELA DE GAME OVER
-    // ===================================================================
-
     static GameObject MontarTelaDeGameOver(Transform canvas, Sprite personagem, GerenciadorDeJogo gerenciador,
         out TMP_Text motivo, out TMP_Text pontuacao)
     {
         GameObject tela = CriarTela(canvas, "TelaDeGameOver", CorFundoDerrota);
 
-        // O recorte é mais alto que largo (1156x1360); manter a proporção evita o personagem achatado.
         float proporcao = personagem.rect.width / personagem.rect.height;
         float altura = 776f;
 
@@ -345,8 +300,6 @@ public static class MontadorDeTelasIlustradas
         CriarTexto(painel.transform, "Titulo", "GAME OVER", 82, CorVermelho,
             new Vector2(0f, 195f), new Vector2(820f, 110f), FontStyles.Bold);
 
-        // O texto real ("SUA VIDA CHEGOU A ZERO!" ou "O TEMPO ACABOU!") é escrito pelo
-        // GerenciadorDeJogo.GameOver(); isto aqui só evita um buraco na tela no Editor.
         motivo = CriarTexto(painel.transform, "Subtitulo", "SUA VIDA CHEGOU A ZERO!", 32, CorTextoClaro,
             new Vector2(0f, 95f), new Vector2(820f, 80f), FontStyles.Normal);
 
@@ -364,11 +317,6 @@ public static class MontadorDeTelasIlustradas
         return tela;
     }
 
-    // ===================================================================
-    //  Funções auxiliares de criação de UI
-    // ===================================================================
-
-    // Fundo que cobre a tela inteira; também bloqueia cliques no que está atrás.
     static GameObject CriarTela(Transform pai, string nome, Color corDoFundo)
     {
         GameObject tela = CriarObjetoUI(nome, pai);
@@ -377,12 +325,10 @@ public static class MontadorDeTelasIlustradas
         Esticar(tela.GetComponent<RectTransform>());
         tela.AddComponent<Image>().color = corDoFundo;
 
-        // As telas nascem escondidas; o GerenciadorDeJogo mostra a certa.
         tela.SetActive(false);
         return tela;
     }
 
-    // Painel com uma barra de destaque colada no topo.
     static GameObject CriarPainel(Transform pai, string nome, Vector2 posicao, Vector2 tamanho,
         Color corDoPainel, Color corDaBarra)
     {
@@ -444,7 +390,6 @@ public static class MontadorDeTelasIlustradas
         cores.selectedColor = normal;
         botao.colors = cores;
 
-        // Equivale a arrastar o GerenciadorDeJogo no OnClick() do botão e escolher o método.
         UnityEventTools.AddPersistentListener(botao.onClick, acao);
 
         TMP_Text texto = CriarTexto(objetoBotao.transform, "Texto", rotulo, 34, corDoTexto,
@@ -489,17 +434,11 @@ public static class MontadorDeTelasIlustradas
         rect.offsetMax = Vector2.zero;
     }
 
-    // ===================================================================
-    //  Funções auxiliares de cena e de referência
-    // ===================================================================
-
     static Sprite CarregarSprite(string caminho)
     {
         return AssetDatabase.LoadAssetAtPath<Sprite>(caminho);
     }
 
-    // A Canvas das telas é a mãe das telas que já existem; se nenhuma existir,
-    // procura pelo nome criado por MontadorDeTelas.
     static Transform EncontrarCanvasDasTelas(GerenciadorDeJogo gerenciador)
     {
         string[] campos = { "telaDeVitoria", "telaDeGameOver", "telaDePause", "telaDeTutorial" };
@@ -535,8 +474,6 @@ public static class MontadorDeTelasIlustradas
         }
     }
 
-    // O GerenciadorDeJogo desliga esses scripts sempre que o estado não é "Jogando".
-    // Sem isso o jogador continua atirando e comprando upgrades com o tutorial aberto.
     static string RelegarAcoesDoJogador(GerenciadorDeJogo gerenciador)
     {
         JogadorVida jogadorVida = Encontrar<JogadorVida>();
@@ -560,7 +497,6 @@ public static class MontadorDeTelasIlustradas
         return "Scripts do jogador religados em \"acoesDoJogador\": " + acoes.Count + ".\n\n";
     }
 
-    // Deixa o tutorial descobrível: quem pausar lê que o T reabre os comandos.
     static void AvisarSobreTutorialNoPause(GerenciadorDeJogo gerenciador)
     {
         GameObject telaDePause = Ler(gerenciador, "telaDePause") as GameObject;
@@ -586,7 +522,6 @@ public static class MontadorDeTelasIlustradas
         }
     }
 
-    // Preenche um campo [SerializeField] no Inspector (funciona com campos private).
     static void Ligar(Object alvo, string campo, Object valor)
     {
         SerializedObject objetoSerializado = new SerializedObject(alvo);

@@ -1,8 +1,6 @@
 using UnityEngine;
 using TMPro;
 
-// Cronômetro regressivo da fase. Coloque no mesmo objeto do GerenciadorDeJogo.
-// Quem inicia/para a contagem é o GerenciadorDeOrdas (início e fim de cada orda).
 public class Cronometro : MonoBehaviour
 {
     [SerializeField] private float tempoInicial = 120f;
@@ -26,8 +24,6 @@ public class Cronometro : MonoBehaviour
 
     void Update()
     {
-        // Time.deltaTime já vale 0 com o jogo pausado, mas conferir o estado
-        // deixa a regra explícita: só conta enquanto está "Jogando".
         if (!contando || !gerenciadorDeJogo.EstaJogando)
         {
             return;
@@ -50,7 +46,6 @@ public class Cronometro : MonoBehaviour
             return;
         }
 
-        // CeilToInt: só mostra 00:00 quando o tempo realmente acabou.
         int segundosTotais = Mathf.CeilToInt(tempoRestante);
         int minutos = segundosTotais / 60;
         int segundos = segundosTotais % 60;

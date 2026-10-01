@@ -4,10 +4,6 @@ using UnityEditor;
 using UnityEditor.Animations;
 using UnityEngine;
 
-// Menu: Ferramentas > Jogador Animado
-//  1) Configura a importação do Character.blend (Humanoid + loops dos clipes)
-//  2) Cria o Animator Controller (Idle / Walk / Run / Pulo)
-//  3) Monta o prefab do Jogador com o personagem animado e a arma na mão
 public static class MontadorJogadorAnimado
 {
     const string CaminhoModelo = "Assets/MEU_PROJETO/Modelos/Character/CharacterAnimado.fbx";
@@ -17,14 +13,10 @@ public static class MontadorJogadorAnimado
     const string CaminhoMascara = "Assets/MEU_PROJETO/Animacoes/MascaraBracos.mask";
     const string NomeFilho = "PersonagemAnimado";
 
-    // Altura do personagem em unidades LOCAIS do prefab (o CapsuleCollider do Jogador tem altura 2)
     const float AlturaLocal = 2f;
-    // Comprimento da arma no mundo, em metros
     const float ComprimentoArmaMetros = 0.30f;
-    // Posição da câmera em relação à cabeça (unidades locais do prefab)
     const float CameraAvancoLocal = 0.20f;
 
-    // nome da ação no Blender -> nome do clipe na Unity, loop?
     static readonly string[] AcoesBlender = { "Robber Idle", "Robber Walk", "Robber Run", "Robber JumpStart", "Robber JumpAir", "Robber JumpLand" };
     static readonly string[] NomesClipe = { "Idle", "Walk", "Run", "JumpStart", "JumpAir", "JumpLand" };
     static readonly bool[] Loop = { true, true, true, false, true, false };
@@ -46,7 +38,6 @@ public static class MontadorJogadorAnimado
     [MenuItem("Ferramentas/Jogador Animado/3 - Montar prefab do Jogador")]
     public static void Passo3() { MontarPrefab(); }
 
-    // ------------------------------------------------------------------ 1
     static bool ConfigurarImportacao()
     {
         AssetDatabase.ImportAsset(CaminhoModelo, ImportAssetOptions.ForceUpdate);
@@ -85,13 +76,12 @@ public static class MontadorJogadorAnimado
                 c.name = NomesClipe[idx];
                 c.loopTime = Loop[idx];
                 c.loopPose = Loop[idx];
-                // o movimento é feito pela física (Rigidbody), então travamos o root dentro da pose
                 c.lockRootRotation = true;
                 c.lockRootHeightY = true;
                 c.lockRootPositionXZ = true;
                 c.keepOriginalOrientation = true;
                 c.keepOriginalPositionY = true;
-                c.keepOriginalPositionXZ = false; // Center of Mass: mantém o corpo centrado no eixo do Jogador
+                c.keepOriginalPositionXZ = false;
                 encontrados.Add(NomesClipe[idx]);
             }
             lista.Add(c);
@@ -111,7 +101,6 @@ public static class MontadorJogadorAnimado
         return true;
     }
 
-    // ------------------------------------------------------------------ 2
     static bool CriarController()
     {
         var clipes = new Dictionary<string, AnimationClip>();
@@ -129,7 +118,6 @@ public static class MontadorJogadorAnimado
             }
         }
 
-        // velocidades reais do jogador (o prefab sobrescreve os valores padrão do script)
         float andar = 5f, correr = 6.5f;
         var prefabAtual = AssetDatabase.LoadAssetAtPath<GameObject>(CaminhoPrefab);
         if (prefabAtual != null)
@@ -148,7 +136,6 @@ public static class MontadorJogadorAnimado
 
         var sm = ctrl.layers[0].stateMachine;
 
-        // Locomoção: Idle (0) -> Walk (andar) -> Run (correr)
         BlendTree arvore;
         var loco = ctrl.CreateBlendTreeInController("Locomocao", out arvore);
         arvore.blendType = BlendTreeType.Simple1D;
@@ -163,41 +150,32 @@ public static class MontadorJogadorAnimado
         var noAr = sm.AddState("NoAr");             noAr.motion = clipes["JumpAir"];
         var pouso = sm.AddState("Pouso");           pouso.motion = clipes["JumpLand"];
 
-        // Locomoção -> pulo (gatilho) ; precisa vir ANTES da transição de queda
         var t = loco.AddTransition(puloInicio);
         t.hasExitTime = false; t.hasFixedDuration = true; t.duration = 0.05f;
         t.AddCondition(AnimatorConditionMode.If, 0, "Pular");
 
-        // Locomoção -> no ar (caiu de uma borda)
         t = loco.AddTransition(noAr);
         t.hasExitTime = false; t.hasFixedDuration = true; t.duration = 0.1f;
         t.AddCondition(AnimatorConditionMode.IfNot, 0, "NoChao");
 
-        // Início do pulo -> no ar (ao terminar o clipe)
         t = puloInicio.AddTransition(noAr);
         t.hasExitTime = true; t.exitTime = 0.95f; t.hasFixedDuration = true; t.duration = 0.05f;
 
-        // No ar -> pouso (tocou o chão)
         t = noAr.AddTransition(pouso);
         t.hasExitTime = false; t.hasFixedDuration = true; t.duration = 0.05f;
         t.AddCondition(AnimatorConditionMode.If, 0, "NoChao");
 
-        // Pouso -> novo pulo imediato
         t = pouso.AddTransition(puloInicio);
         t.hasExitTime = false; t.hasFixedDuration = true; t.duration = 0.05f;
         t.AddCondition(AnimatorConditionMode.If, 0, "Pular");
 
-        // Pouso -> volta a cair
         t = pouso.AddTransition(noAr);
         t.hasExitTime = false; t.hasFixedDuration = true; t.duration = 0.05f;
         t.AddCondition(AnimatorConditionMode.IfNot, 0, "NoChao");
 
-        // Pouso -> locomoção (ao terminar o clipe)
         t = pouso.AddTransition(loco);
         t.hasExitTime = true; t.exitTime = 0.9f; t.hasFixedDuration = true; t.duration = 0.1f;
 
-        // Camada "Bracos": mantém os braços na pose do Idle (arma levantada) ao andar, correr e pular.
-        // A máscara libera só braços/mãos; pernas e tronco continuam com a camada base.
         var mascara = AssetDatabase.LoadAssetAtPath<AvatarMask>(CaminhoMascara);
         if (mascara == null)
         {
@@ -232,7 +210,6 @@ public static class MontadorJogadorAnimado
         return true;
     }
 
-    // ------------------------------------------------------------------ 3
     static void MontarPrefab()
     {
         var modelo = AssetDatabase.LoadAssetAtPath<GameObject>(CaminhoModelo);
@@ -243,18 +220,15 @@ public static class MontadorJogadorAnimado
             return;
         }
 
-        // backup de segurança do prefab original (só na primeira vez)
         if (AssetDatabase.LoadAssetAtPath<GameObject>(CaminhoBackup) == null)
             AssetDatabase.CopyAsset(CaminhoPrefab, CaminhoBackup);
 
         var raiz = PrefabUtility.LoadPrefabContents(CaminhoPrefab);
         try
         {
-            // remove montagem anterior (permite rodar de novo)
             var antigo = raiz.transform.Find(NomeFilho);
             if (antigo != null) Object.DestroyImmediate(antigo.gameObject);
 
-            // ---- instancia o personagem
             var go = (GameObject)PrefabUtility.InstantiatePrefab(modelo, raiz.transform);
             go.name = NomeFilho;
             go.transform.localPosition = Vector3.zero;
@@ -273,9 +247,6 @@ public static class MontadorJogadorAnimado
                 return;
             }
 
-            // 1) orienta para que a frente do personagem coincida com a frente (+Z) do Jogador
-            // a frente vem da linha dos quadris (os pés ficam abertos no Idle e davam ~8 graus de erro);
-            // a direção dos pés só decide o sentido e serve de reserva
             Vector3 frente = Vector3.ProjectOnPlane(dedo.position - pe.position, Vector3.up);
             Transform quadrilEsq = Achar(go.transform, "mixamorig:LeftUpLeg");
             Transform quadrilDir = Achar(go.transform, "mixamorig:RightUpLeg");
@@ -292,14 +263,12 @@ public static class MontadorJogadorAnimado
                 go.transform.rotation = Quaternion.Euler(0f, ang, 0f) * go.transform.rotation;
             }
 
-            // 2) escala para a altura do CapsuleCollider
             float chao = MenorY(go.transform);
             float alturaMundo = topo.position.y - chao;
             float alvoMundo = AlturaLocal * raiz.transform.lossyScale.y;
             if (alturaMundo > 1e-4f)
                 go.transform.localScale = Vector3.one * (alvoMundo / alturaMundo);
 
-            // 3) centraliza (quadril no eixo do Jogador) e apoia os pés no chão (y = 0 local)
             chao = MenorY(go.transform);
             Vector3 desloc = new Vector3(
                 raiz.transform.position.x - hips.position.x,
@@ -307,7 +276,6 @@ public static class MontadorJogadorAnimado
                 raiz.transform.position.z - hips.position.z);
             go.transform.position += desloc;
 
-            // ---- Animator
             var anim = go.GetComponent<Animator>();
             if (anim == null) anim = go.AddComponent<Animator>();
             if (anim.avatar == null)
@@ -316,19 +284,17 @@ public static class MontadorJogadorAnimado
             anim.applyRootMotion = false;
             anim.cullingMode = AnimatorCullingMode.AlwaysAnimate;
 
-            // ---- esconde o corpo/braços antigos (sem apagar nada)
             var skins = raiz.transform.Find("Skins");
             if (skins != null)
                 foreach (var r in skins.GetComponentsInChildren<Renderer>(true)) r.enabled = false;
 
-            // ---- arma
             Transform arma = Achar(raiz.transform, "arma_papelao");
             Transform bracoEsq = Achar(raiz.transform, "Braco_esquerdo");
             if (arma != null)
             {
                 if (arma.parent != raiz.transform) arma.SetParent(raiz.transform, true);
 
-                float comp = 19.2f; // comprimento do mesh em unidades originais do modelo
+                float comp = 19.2f;
                 Transform corpoArma = Achar(arma, "Gun_body");
                 var mf = corpoArma != null ? corpoArma.GetComponent<MeshFilter>() : null;
                 if (mf != null && mf.sharedMesh != null)
@@ -346,7 +312,6 @@ public static class MontadorJogadorAnimado
             if (bracoEsq != null)
                 foreach (var r in bracoEsq.GetComponents<Renderer>()) r.enabled = false;
 
-            // ---- câmera na altura dos olhos
             Transform cam = Achar(raiz.transform, "Camera");
             if (cam != null)
             {
@@ -355,14 +320,12 @@ public static class MontadorJogadorAnimado
                 cam.localPosition = new Vector3(0f, local.y, local.z + CameraAvancoLocal);
             }
 
-            // near clip pequeno: sem isso o braço/arma de perto são cortados pela câmera
             if (cam != null)
             {
                 var camComp = cam.GetComponent<Camera>();
                 if (camComp != null) camComp.nearClipPlane = 0.05f;
             }
 
-            // ---- scripts de animação
             var ja = raiz.GetComponent<JogadorAnimador>();
             if (ja == null) ja = raiz.AddComponent<JogadorAnimador>();
             ja.animator = anim;
@@ -388,7 +351,6 @@ public static class MontadorJogadorAnimado
         }
     }
 
-    // ------------------------------------------------------------------ util
     static Transform Achar(Transform raiz, string nome)
     {
         if (raiz.name == nome) return raiz;
@@ -400,7 +362,6 @@ public static class MontadorJogadorAnimado
         return null;
     }
 
-    // menor altura (mundo) entre os ossos dos pés/dedos
     static float MenorY(Transform modelo)
     {
         string[] nomes = { "mixamorig:LeftFoot", "mixamorig:RightFoot", "mixamorig:LeftToeBase", "mixamorig:RightToeBase",

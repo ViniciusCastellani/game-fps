@@ -1,16 +1,12 @@
 using UnityEngine;
 using TMPro;
 
-// Coloque no prefab da estação de cura (fixa no mapa, NÃO é destruída ao usar).
-// Precisa de um Collider marcado como "Is Trigger" (raio maior que o modelo,
-// pra detectar quando o jogador chega perto).
 public class EstacaoDeCura : MonoBehaviour
 {
     public int quantidadeDeCura = 50;
     public int custoEmPontos = 20;
     public KeyCode teclaDeUso = KeyCode.E;
 
-    // Arraste aqui o Canvas (World Space) filho que contém o texto.
     public GameObject painelDeTexto;
     public TMP_Text textoFlutuante;
 
@@ -32,7 +28,7 @@ public class EstacaoDeCura : MonoBehaviour
 
         fonteDeAudio.playOnAwake = false;
         fonteDeAudio.loop = false;
-        fonteDeAudio.spatialBlend = 0f; // 2D: feedback sempre audível
+        fonteDeAudio.spatialBlend = 0f;
 
         AtualizarTexto();
 

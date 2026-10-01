@@ -45,7 +45,6 @@ public class JogadorVida : MonoBehaviour
     {
         Debug.Log("Jogador morreu.");
 
-        // Pode ficar vazio em uma cena de teste sem GerenciadorDeJogo.
         if (gerenciadorDeJogo != null)
         {
             gerenciadorDeJogo.GameOver("SUA VIDA CHEGOU A ZERO!");

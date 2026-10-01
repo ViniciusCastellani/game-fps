@@ -9,7 +9,6 @@ public class InimigoPerseguidor : MonoBehaviour
         inimigo = GetComponent<NavMeshAgent>();
         jogador = GameObject.FindWithTag("Jogador").GetComponent<Transform>();
     }
-    // Update is called once per frame
     void Update()
     {
         PerseguirJogador();

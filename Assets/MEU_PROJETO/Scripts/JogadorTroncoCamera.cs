@@ -1,14 +1,11 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-// Inclina o tronco do personagem junto com a câmera (olhar para cima/baixo),
-// para que o braço com a arma continue sempre no campo de visão.
-// Não altera o seu JogadorMovimentoCamera: apenas LÊ a rotação vertical da câmera.
-[DefaultExecutionOrder(-100)] // roda antes do ArmaNaMao, que segue a posição da mão
+[DefaultExecutionOrder(-100)]
 public class JogadorTroncoCamera : MonoBehaviour
 {
-    public Animator animator;        // Animator do PersonagemAnimado
-    public Transform cameraJogador;  // Camera do jogador
+    public Animator animator;
+    public Transform cameraJogador;
 
     [Tooltip("Quanto do ângulo vertical da câmera o tronco acompanha (1 = mão sempre no mesmo lugar da tela).")]
     [Range(0f, 1f)] public float fracaoDoOlhar = 0.8f;
@@ -40,11 +37,8 @@ public class JogadorTroncoCamera : MonoBehaviour
             return;
         }
 
-        // Em primeira pessoa o corpo fica fora da visão da câmera; com o culling padrão o Animator
-        // deixaria de atualizar os ossos (pose congelada e inclinação somando a cada frame).
         animator.cullingMode = AnimatorCullingMode.AlwaysAnimate;
 
-        // ordem: do pai para o filho, para que as rotações se somem ao longo da coluna
         AdicionarOsso(HumanBodyBones.Spine);
         AdicionarOsso(HumanBodyBones.Chest);
         AdicionarOsso(HumanBodyBones.UpperChest);
@@ -60,18 +54,15 @@ public class JogadorTroncoCamera : MonoBehaviour
         if (t != null) ossos.Add(t);
     }
 
-    // LateUpdate: depois do Animator ter aplicado a pose do frame
     void LateUpdate()
     {
         if (ossos.Count == 0) return;
 
         if (centralizarCorpo && quadril != null) CentralizarCorpo();
 
-        // rotação vertical da câmera: positivo = olhando para baixo
         float pitch = Mathf.DeltaAngle(0f, cameraJogador.localEulerAngles.x);
         float angulo = Mathf.Clamp(pitch * fracaoDoOlhar, -anguloMaximo, anguloMaximo);
 
-        // eixo = lado direito do personagem (não muda com a inclinação da câmera)
         Vector3 eixo = animator.transform.right;
         float porOsso = angulo / ossos.Count;
         foreach (Transform osso in ossos)
@@ -81,8 +72,6 @@ public class JogadorTroncoCamera : MonoBehaviour
             cabeca.localScale = esconderCabeca ? Vector3.zero : escalaCabeca;
     }
 
-    // Mede onde o quadril está (pose atual do Animator) em relação ao eixo do Jogador
-    // e move a raiz do modelo para cancelar esse deslocamento horizontal.
     void CentralizarCorpo()
     {
         Transform raizModelo = animator.transform;
@@ -95,7 +84,6 @@ public class JogadorTroncoCamera : MonoBehaviour
                       (quadril.position.z - transform.position.z).ToString("F3"));
         }
 
-        // posição do quadril em relação à raiz do modelo, nesta pose (independe de onde a raiz está)
         Vector3 h = quadril.position - raizModelo.position;
         raizModelo.position = new Vector3(transform.position.x - h.x, raizModelo.position.y, transform.position.z - h.z);
     }

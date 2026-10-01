@@ -1,7 +1,5 @@
 using UnityEngine;
 
-// Coloque esse script no prefab do medkit (o coletável, não a estação).
-// O objeto precisa de um Collider marcado como "Is Trigger".
 public class Medkit : MonoBehaviour
 {
     public int quantidadeDeCura = 25;
@@ -9,7 +7,6 @@ public class Medkit : MonoBehaviour
 
     void OnTriggerEnter(Collider outro)
     {
-        // só reage se quem encostou for o jogador
         if (!outro.CompareTag("Jogador"))
         {
             return;
@@ -27,7 +24,6 @@ public class Medkit : MonoBehaviour
             return;
         }
 
-        // Se a vida já está cheia, não coleta — o medkit continua no chão.
         if (vidaDoJogador.vidaAtual >= vidaDoJogador.vidaMaxima)
         {
             return;

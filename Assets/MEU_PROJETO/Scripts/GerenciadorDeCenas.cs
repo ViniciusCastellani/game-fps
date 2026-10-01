@@ -6,9 +6,6 @@ public class GerenciadorDeCenas : MonoBehaviour
     public string nomeDaProximaFase;
     public string nomeDaTelaInicial;
 
-    // O pause agora é controlado pelo GerenciadorDeJogo (estados + Time.timeScale).
-    // Este script cuida só da troca de cenas.
-
     public void ProximaFase()
     {
         Debug.Log("Gerenciar Cenas Jogar" + nomeDaProximaFase);

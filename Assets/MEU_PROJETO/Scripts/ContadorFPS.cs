@@ -1,8 +1,6 @@
 using UnityEngine;
 using TMPro;
 
-// Coloque em um Canvas próprio com Sort Order alto (ex: "CanvasFPS"), em cada cena,
-// para o texto ficar por cima de tudo, inclusive das telas de Pause/Game Over/Vitória.
 public class ContadorFPS : MonoBehaviour
 {
     [SerializeField] private TMP_Text textoFPS;
@@ -13,8 +11,6 @@ public class ContadorFPS : MonoBehaviour
 
     void Update()
     {
-        // unscaledDeltaTime continua contando mesmo com Time.timeScale = 0
-        // (pause, game over e vitória).
         quadros++;
         tempoAcumulado += Time.unscaledDeltaTime;
 

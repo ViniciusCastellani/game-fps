@@ -1,8 +1,6 @@
 using UnityEngine;
 using TMPro;
 
-// Coloque no prefab da estação de upgrade (fixa no mapa, NÃO é destruída ao usar).
-// Precisa de um Collider marcado como "Is Trigger".
 public class EstacaoDeUpgrade : MonoBehaviour
 {
     [Header("Upgrade de Dano")]
@@ -36,7 +34,7 @@ public class EstacaoDeUpgrade : MonoBehaviour
 
         fonteDeAudio.playOnAwake = false;
         fonteDeAudio.loop = false;
-        fonteDeAudio.spatialBlend = 0f; // 2D: feedback sempre audível
+        fonteDeAudio.spatialBlend = 0f;
 
         AtualizarTexto();
 

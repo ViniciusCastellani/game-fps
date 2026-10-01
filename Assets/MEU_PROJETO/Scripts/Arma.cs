@@ -16,7 +16,6 @@ public class Arma : MonoBehaviour
     public int municaoAtual = 30;
     public int municaoReserva = 90;
 
-    // Enquanto está recarregando, não pode atirar nem começar outra recarga.
     private bool recarregando = false;
 
     void Update()
@@ -49,14 +48,11 @@ public class Arma : MonoBehaviour
         municaoAtual--;
 
         audioFonte.PlayOneShot(somDoTiro);
-        // cria um raio invisível que começa na posição da câmera; segue para a direção em que a câmera está olhando;
         Ray raio = new Ray(cameraJogador.transform.position, cameraJogador.transform.forward);
-        RaycastHit hit; // variavel hit = acerto do tiro
-                        // se o tiro, informações de impacto, alcance maximo
+        RaycastHit hit;
         if (Physics.Raycast(raio, out hit, alcance))
         {
             Debug.Log("Acertou: " + hit.collider.name);
-            // se o tiro acertou um inimigo
             if (hit.collider.gameObject.CompareTag("Inimigo"))
             {
                 CausaDano(hit);
@@ -74,13 +70,11 @@ public class Arma : MonoBehaviour
 
     void Recarregar()
     {
-        // Não recarrega se o pente já estiver cheio
         if (municaoAtual >= capacidadePente)
         {
             return;
         }
 
-        // Não recarrega se não houver munição reserva
         if (municaoReserva <= 0)
         {
             return;
@@ -95,7 +89,6 @@ public class Arma : MonoBehaviour
 
         audioFonte.PlayOneShot(somDeRecarga);
 
-        // Espera o som de recarga terminar antes de somar a munição de verdade.
         if (somDeRecarga != null)
         {
             yield return new WaitForSeconds(somDeRecarga.length);
@@ -103,8 +96,6 @@ public class Arma : MonoBehaviour
 
         int quantidadeNecessaria = capacidadePente - municaoAtual;
 
-        // Se a reserva tiver menos munição do que o necessário,
-        // utiliza somente o que estiver disponível.
         int quantidadeRecarregada = Mathf.Min(
             quantidadeNecessaria,
             municaoReserva
@@ -123,8 +114,6 @@ public class Arma : MonoBehaviour
         recarregando = false;
     }
 
-    // Chamado pelo script de pickup (Municao.cs) quando o jogador
-    // coleta uma caixa de munição no chão.
     public void AdicionarMunicao(int quantidade)
     {
         municaoReserva += quantidade;
@@ -132,8 +121,6 @@ public class Arma : MonoBehaviour
         Debug.Log("Munição reserva: " + municaoReserva);
     }
 
-    // Chamado pela LojaDeUpgrades quando o jogador gasta pontos
-    // para aumentar a capacidade do pente.
     public void AumentarCapacidadeDoPente(int quantidade)
     {
         capacidadePente += quantidade;

@@ -37,7 +37,6 @@ public class InimigoAtaque : MonoBehaviour
     private float proximoAtaquePermitidoEm = 0f;
     private bool atacando = false;
 
-    // Lido pelo InimigoSomDePassos para calar os passos durante o ataque.
     public bool Atacando { get { return atacando; } }
 
     void Start()
@@ -107,7 +106,6 @@ public class InimigoAtaque : MonoBehaviour
 
         yield return new WaitForSeconds(atrasoDoDano);
 
-        // Só agora confere se o jogador está dentro da zona do golpe.
         if (JogadorEstaNaZonaDeAcerto())
         {
             vidaDoJogador.ReceberDano(dano);
@@ -130,19 +128,16 @@ public class InimigoAtaque : MonoBehaviour
     {
         Vector3 origem = pontoDoGolpe != null ? pontoDoGolpe.position : transform.position;
 
-        // 1) Distância horizontal até o jogador.
         if (DistanciaHorizontal(origem, jogador.position) > alcanceDoGolpe)
         {
             return false;
         }
 
-        // 2) Altura: evita acertar quem está muito acima ou abaixo.
         if (Mathf.Abs(jogador.position.y - origem.y) > toleranciaVertical)
         {
             return false;
         }
 
-        // 3) Ângulo: o jogador precisa estar na frente do inimigo.
         Vector3 paraJogador = jogador.position - transform.position;
         paraJogador.y = 0f;
 
@@ -188,7 +183,6 @@ public class InimigoAtaque : MonoBehaviour
         transform.rotation = Quaternion.Slerp(transform.rotation, alvo, velocidadeDeGiro * Time.deltaTime);
     }
 
-    // Mostra na Scene o alcance do golpe (vermelho) e o de início do ataque (amarelo).
     void OnDrawGizmosSelected()
     {
         Vector3 origem = pontoDoGolpe != null ? pontoDoGolpe.position : transform.position;
@@ -199,7 +193,6 @@ public class InimigoAtaque : MonoBehaviour
         Gizmos.color = Color.yellow;
         Gizmos.DrawWireSphere(transform.position, alcanceDeAtaque);
 
-        // Linhas do cone frontal.
         float metade = anguloDoGolpe * 0.5f;
         Vector3 esquerda = Quaternion.Euler(0f, -metade, 0f) * transform.forward;
         Vector3 direita = Quaternion.Euler(0f, metade, 0f) * transform.forward;

@@ -9,10 +9,6 @@ using UnityEditor.Events;
 using UnityEditor.SceneManagement;
 using TMPro;
 
-// Ferramenta de Editor (fica na pasta "Editor", então NÃO vai para o build).
-// Aparece no menu "Jogo" da barra superior da Unity.
-// Monta na cena aberta as telas de Pause, Game Over e Vitória (com botões funcionando),
-// o texto do cronômetro e o contador de FPS, e já liga todas as referências no Inspector.
 public static class MontadorDeTelas
 {
     [MenuItem("Jogo/Montar Telas na Cena de Gameplay")]
@@ -34,7 +30,6 @@ public static class MontadorDeTelas
             return;
         }
 
-        // ---------- GerenciadorDeJogo + Cronometro + GerenciadorDeCenas ----------
         GameObject objetoGerenciador = new GameObject("GerenciadorDeJogo");
         Undo.RegisterCreatedObjectUndo(objetoGerenciador, "Montar Telas");
 
@@ -47,7 +42,6 @@ public static class MontadorDeTelas
         AudioSource fonteDeAudio = objetoGerenciador.AddComponent<AudioSource>();
         fonteDeAudio.playOnAwake = false;
 
-        // ---------- Telas ----------
         GameObject canvasTelas = CriarCanvas("CanvasTelas", 10);
 
         GameObject telaDePause = CriarTela(canvasTelas.transform, "TelaDePause", "JOGO PAUSADO", Color.white,
@@ -65,7 +59,6 @@ public static class MontadorDeTelas
         TMP_Text textoBotaoProximaFase = CriarBotao(caixaVitoria, "BotaoProximaFase", "Próxima Fase", -60f, gerenciador.ProximaFase);
         CriarBotao(caixaVitoria, "BotaoMenuPrincipal", "Menu Principal", -175f, gerenciador.VoltarAoMenu);
 
-        // ---------- Texto do cronômetro (na Canvas da HUD que já existe) ----------
         Transform canvasDaHUD = canvasTelas.transform;
         HUDJogador hud = Encontrar<HUDJogador>();
 
@@ -78,8 +71,6 @@ public static class MontadorDeTelas
             Vector2.zero, new Vector2(500f, 70f), FontStyles.Bold);
         FixarNoCanto(textoTempo.rectTransform, new Vector2(0.5f, 1f), new Vector2(0f, -30f));
 
-        // Se existe o texto da orda, usa a mesma âncora dele e fica logo abaixo da caixa,
-        // assim os dois nunca se sobrepõem, qualquer que seja a proporção da tela.
         if (gerenciadorDeOrdas.textoOrda != null)
         {
             RectTransform orda = gerenciadorDeOrdas.textoOrda.rectTransform;
@@ -92,7 +83,6 @@ public static class MontadorDeTelas
             tempo.anchoredPosition = new Vector2(orda.anchoredPosition.x, baseDaCaixaDaOrda - 10f);
         }
 
-        // ---------- Scripts do jogador que param em Pause/Game Over/Vitória ----------
         GameObject jogador = jogadorVida.gameObject;
         List<Object> acoesDoJogador = new List<Object>();
         acoesDoJogador.AddRange(jogador.GetComponentsInChildren<Arma>(true));
@@ -102,7 +92,6 @@ public static class MontadorDeTelas
         acoesDoJogador.AddRange(jogador.GetComponentsInChildren<JogadorInteracao>(true));
         acoesDoJogador.AddRange(jogador.GetComponentsInChildren<LojaDeUpgrades>(true));
 
-        // ---------- Referências no Inspector ----------
         Ligar(gerenciador, "telaDePause", telaDePause);
         Ligar(gerenciador, "telaDeGameOver", telaDeGameOver);
         Ligar(gerenciador, "telaDeVitoria", telaDeVitoria);
@@ -153,7 +142,6 @@ public static class MontadorDeTelas
 
     static void CriarContadorDeFPS()
     {
-        // Sort Order 100: fica por cima da HUD e das telas (CanvasTelas usa 10).
         GameObject canvasFPS = CriarCanvas("CanvasFPS", 100);
 
         TMP_Text textoFPS = CriarTexto(canvasFPS.transform, "TextFPS", "FPS: --", 32, new Color(0.3f, 1f, 0.3f),
@@ -164,8 +152,6 @@ public static class MontadorDeTelas
         ContadorFPS contador = canvasFPS.AddComponent<ContadorFPS>();
         Ligar(contador, "textoFPS", textoFPS);
     }
-
-    // ================= Funções auxiliares de criação de UI =================
 
     static GameObject CriarCanvas(string nome, int ordem)
     {
@@ -188,7 +174,6 @@ public static class MontadorDeTelas
     static GameObject CriarTela(Transform pai, string nome, string titulo, Color corDoTitulo, string subtitulo,
         out TMP_Text textoSubtitulo, out Transform caixa)
     {
-        // Fundo escuro que cobre a tela inteira (também bloqueia cliques no jogo).
         GameObject fundo = CriarObjetoUI(nome, pai);
         Esticar(fundo.GetComponent<RectTransform>());
         fundo.AddComponent<Image>().color = new Color(0f, 0f, 0f, 0.75f);
@@ -204,7 +189,6 @@ public static class MontadorDeTelas
 
         caixa = objetoCaixa.transform;
 
-        // As telas começam escondidas; o GerenciadorDeJogo mostra a certa.
         fundo.SetActive(false);
         return fundo;
     }
@@ -227,7 +211,6 @@ public static class MontadorDeTelas
         cores.selectedColor = cores.normalColor;
         botao.colors = cores;
 
-        // Equivale a arrastar o GerenciadorDeJogo no OnClick() do botão e escolher o método.
         UnityEventTools.AddPersistentListener(botao.onClick, acao);
 
         TMP_Text texto = CriarTexto(objetoBotao.transform, "Texto", rotulo, 38, Color.white,
@@ -280,9 +263,6 @@ public static class MontadorDeTelas
         rect.anchoredPosition = deslocamento;
     }
 
-    // ================= Funções auxiliares de referência =================
-
-    // Preenche um campo [SerializeField] no Inspector (funciona com campos private).
     static void Ligar(Object alvo, string campo, Object valor)
     {
         SerializedObject objetoSerializado = new SerializedObject(alvo);

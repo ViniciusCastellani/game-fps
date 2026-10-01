@@ -1,8 +1,6 @@
 using UnityEngine;
 using UnityEngine.AI;
 
-// Coloque no inimigo (junto do NavMeshAgent).
-// Toca passos enquanto o inimigo está andando e CALA na hora em que ele ataca.
 public class InimigoSomDePassos : MonoBehaviour
 {
     [Header("Sons")]
@@ -31,15 +29,13 @@ public class InimigoSomDePassos : MonoBehaviour
         agente = GetComponent<NavMeshAgent>();
         ataque = GetComponent<InimigoAtaque>();
 
-        // Cria uma fonte de áudio própria (num filho) para não misturar com
-        // o AudioSource que os outros scripts do inimigo já usam.
         GameObject filho = new GameObject("SomDePassos");
         filho.transform.SetParent(transform, false);
 
         fonte = filho.AddComponent<AudioSource>();
         fonte.playOnAwake = false;
         fonte.loop = false;
-        fonte.spatialBlend = 1f; // 3D: o som vem da direção do inimigo
+        fonte.spatialBlend = 1f;
         fonte.rolloffMode = AudioRolloffMode.Linear;
         fonte.minDistance = distanciaMinima;
         fonte.maxDistance = distanciaMaxima;
@@ -47,7 +43,6 @@ public class InimigoSomDePassos : MonoBehaviour
 
     void Update()
     {
-        // Atacando: corta qualquer passo que ainda esteja tocando e não toca mais.
         if (ataque != null && ataque.Atacando)
         {
             if (fonte.isPlaying)
@@ -76,7 +71,6 @@ public class InimigoSomDePassos : MonoBehaviour
             return false;
         }
 
-        // isStopped = true quando o InimigoAtaque mandou parar (perto do jogador)
         if (agente.isStopped)
         {
             return false;
@@ -94,7 +88,6 @@ public class InimigoSomDePassos : MonoBehaviour
 
         int indice = Random.Range(0, sonsDePasso.Length);
 
-        // evita repetir o mesmo som duas vezes seguidas
         if (sonsDePasso.Length > 1 && indice == ultimoSorteado)
         {
             indice = (indice + 1) % sonsDePasso.Length;
