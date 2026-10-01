@@ -16,8 +16,24 @@ public class EstacaoDeCura : MonoBehaviour
 
     private JogadorVida jogadorPerto;
 
+    [Header("Sons")]
+    public AudioClip somSemPontos;
+    public AudioClip somDeCompra;
+    private AudioSource fonteDeAudio;
+
     void Start()
     {
+        fonteDeAudio = GetComponent<AudioSource>();
+
+        if (fonteDeAudio == null)
+        {
+            fonteDeAudio = gameObject.AddComponent<AudioSource>();
+        }
+
+        fonteDeAudio.playOnAwake = false;
+        fonteDeAudio.loop = false;
+        fonteDeAudio.spatialBlend = 0f; // 2D: feedback sempre audível
+
         AtualizarTexto();
 
         if (painelDeTexto != null)
@@ -74,10 +90,20 @@ public class EstacaoDeCura : MonoBehaviour
         if (!SistemaDePontos.instancia.GastarPontos(custoEmPontos))
         {
             Debug.Log("Pontos insuficientes pra usar a estação de cura.");
+            TocarSom(somSemPontos);
             return;
         }
 
         jogadorPerto.RecuperarVida(quantidadeDeCura);
+        TocarSom(somDeCompra);
+    }
+
+    void TocarSom(AudioClip som)
+    {
+        if (som != null && fonteDeAudio != null)
+        {
+            fonteDeAudio.PlayOneShot(som);
+        }
     }
 
     void AtualizarTexto()

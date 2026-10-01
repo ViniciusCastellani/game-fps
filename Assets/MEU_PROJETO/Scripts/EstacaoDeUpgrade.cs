@@ -20,8 +20,24 @@ public class EstacaoDeUpgrade : MonoBehaviour
 
     private Arma armaDoJogador;
 
+    [Header("Sons")]
+    public AudioClip somSemPontos;
+    public AudioClip somDeCompra;
+    private AudioSource fonteDeAudio;
+
     void Start()
     {
+        fonteDeAudio = GetComponent<AudioSource>();
+
+        if (fonteDeAudio == null)
+        {
+            fonteDeAudio = gameObject.AddComponent<AudioSource>();
+        }
+
+        fonteDeAudio.playOnAwake = false;
+        fonteDeAudio.loop = false;
+        fonteDeAudio.spatialBlend = 0f; // 2D: feedback sempre audível
+
         AtualizarTexto();
 
         if (painelDeTexto != null)
@@ -88,10 +104,12 @@ public class EstacaoDeUpgrade : MonoBehaviour
         if (!SistemaDePontos.instancia.GastarPontos(custoDoDano))
         {
             Debug.Log("Pontos insuficientes.");
+            TocarSom(somSemPontos);
             return;
         }
 
         armaDoJogador.dano += aumentoDeDano;
+        TocarSom(somDeCompra);
     }
 
     void ComprarUpgradeDeCapacidade()
@@ -99,10 +117,20 @@ public class EstacaoDeUpgrade : MonoBehaviour
         if (!SistemaDePontos.instancia.GastarPontos(custoDaCapacidade))
         {
             Debug.Log("Pontos insuficientes.");
+            TocarSom(somSemPontos);
             return;
         }
 
         armaDoJogador.AumentarCapacidadeDoPente(aumentoDeCapacidade);
+        TocarSom(somDeCompra);
+    }
+
+    void TocarSom(AudioClip som)
+    {
+        if (som != null && fonteDeAudio != null)
+        {
+            fonteDeAudio.PlayOneShot(som);
+        }
     }
 
     void AtualizarTexto()

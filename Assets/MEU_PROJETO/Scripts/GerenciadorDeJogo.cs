@@ -1,8 +1,6 @@
 using UnityEngine;
 using TMPro;
 
-// Coloque esse script em um GameObject vazio na cena de gameplay (ex: "GerenciadorDeJogo").
-// É o ÚNICO script que altera Time.timeScale e o cursor durante o gameplay.
 public class GerenciadorDeJogo : MonoBehaviour
 {
     public enum EstadoDoJogo
@@ -37,8 +35,6 @@ public class GerenciadorDeJogo : MonoBehaviour
     [SerializeField] private GerenciadorDeOrdas gerenciadorDeOrdas;
     [SerializeField] private GerenciadorDeCenas gerenciadorDeCenas;
 
-    // Scripts do jogador (tiro, movimento, câmera, pulo, loja...) que ficam
-    // desligados sempre que o estado não for "Jogando".
     [SerializeField] private Behaviour[] acoesDoJogador;
 
     [Header("Áudio (opcional)")]
@@ -53,8 +49,6 @@ public class GerenciadorDeJogo : MonoBehaviour
         get { return Estado == EstadoDoJogo.Jogando; }
     }
 
-    // Para onde voltar quando o tutorial fechar: ele pode ser aberto no começo
-    // da partida (volta para Jogando) ou a partir da tela de pause (volta para Pausado).
     private EstadoDoJogo estadoAntesDoTutorial = EstadoDoJogo.Jogando;
 
     void Start()
@@ -77,7 +71,6 @@ public class GerenciadorDeJogo : MonoBehaviour
             return;
         }
 
-        // Em Game Over ou Vitória o Escape não faz nada.
         if (Estado == EstadoDoJogo.Jogando)
         {
             Pausar();
@@ -92,7 +85,6 @@ public class GerenciadorDeJogo : MonoBehaviour
         }
     }
 
-    // Botão "Como Jogar" / tecla do tutorial.
     public void AbrirTutorial()
     {
         if (telaDeTutorial == null)
@@ -109,7 +101,6 @@ public class GerenciadorDeJogo : MonoBehaviour
         MudarEstado(EstadoDoJogo.Tutorial);
     }
 
-    // Botão "Começar" / "Entendi" da tela de tutorial.
     public void FecharTutorial()
     {
         if (Estado == EstadoDoJogo.Tutorial)
@@ -126,7 +117,6 @@ public class GerenciadorDeJogo : MonoBehaviour
         }
     }
 
-    // Botão "Continuar" da tela de pause.
     public void Continuar()
     {
         if (Estado == EstadoDoJogo.Pausado)
@@ -135,7 +125,6 @@ public class GerenciadorDeJogo : MonoBehaviour
         }
     }
 
-    // Chamado pelo JogadorVida (vida zerada) e pelo Cronometro (tempo zerado).
     public void GameOver(string motivo)
     {
         if (!EstaJogando)
@@ -153,14 +142,12 @@ public class GerenciadorDeJogo : MonoBehaviour
         MudarEstado(EstadoDoJogo.GameOver);
         TocarSom(somDeGameOver);
 
-        // Fim de jogo de verdade: a música principal para.
         if (MusicaDoJogo.instancia != null)
         {
             MusicaDoJogo.instancia.Parar();
         }
     }
 
-    // Chamado pelo GerenciadorDeOrdas quando todos os inimigos da orda morrem.
     public void Vitoria()
     {
         if (!EstaJogando)
@@ -173,8 +160,6 @@ public class GerenciadorDeJogo : MonoBehaviour
             textoDescricaoVitoria.text = "VOCÊ VENCEU!\nTodas as fases foram concluídas.";
             textoBotaoProximaFase.text = "Jogar Novamente";
 
-            // Só para a música na vitória FINAL — nas fases intermediárias
-            // ela continua tocando, porque o jogo ainda não acabou.
             if (MusicaDoJogo.instancia != null)
             {
                 MusicaDoJogo.instancia.Parar();
@@ -192,7 +177,6 @@ public class GerenciadorDeJogo : MonoBehaviour
         TocarSom(somDeVitoria);
     }
 
-    // Botão "Próxima Fase" da tela de vitória.
     public void ProximaFase()
     {
         if (Estado != EstadoDoJogo.Vitoria)
@@ -200,29 +184,35 @@ public class GerenciadorDeJogo : MonoBehaviour
             return;
         }
 
+        PararSomDeFim();
+
         if (gerenciadorDeOrdas.EhUltimaOrda)
         {
-            // Depois da última fase, recomeça da Fase 1.
             Time.timeScale = 1f;
             gerenciadorDeCenas.ReiniciarFase();
             return;
         }
 
         MudarEstado(EstadoDoJogo.Jogando);
+
+        if (MusicaDoJogo.instancia != null)
+        {
+            MusicaDoJogo.instancia.GarantirTocando();
+        }
+
         gerenciadorDeOrdas.IniciarProximaOrda();
     }
 
-    // Botão "Reiniciar" da tela de Game Over: recarrega a cena na mesma fase.
     public void ReiniciarFase()
     {
+        PararSomDeFim();
         gerenciadorDeOrdas.ReiniciarNaOrdaAtual();
         Time.timeScale = 1f;
         gerenciadorDeCenas.ReiniciarFase();
     }
-
-    // Botões "Sair para o Menu" / "Menu Principal".
     public void VoltarAoMenu()
     {
+        PararSomDeFim();
         Time.timeScale = 1f;
         gerenciadorDeCenas.VoltarParaTelaInicial();
     }
@@ -233,8 +223,6 @@ public class GerenciadorDeJogo : MonoBehaviour
 
         bool jogando = novoEstado == EstadoDoJogo.Jogando;
 
-        // Com timeScale = 0 a física, o NavMesh dos inimigos, o Time.deltaTime
-        // e os WaitForSeconds param.
         Time.timeScale = jogando ? 1f : 0f;
 
         Cursor.lockState = jogando ? CursorLockMode.Locked : CursorLockMode.None;
@@ -245,8 +233,6 @@ public class GerenciadorDeJogo : MonoBehaviour
         Mostrar(telaDeVitoria, novoEstado == EstadoDoJogo.Vitoria);
         Mostrar(telaDeTutorial, novoEstado == EstadoDoJogo.Tutorial);
 
-        // timeScale = 0 não bloqueia Input.GetButtonDown, então desligamos
-        // os scripts do jogador para ele não atirar/pular com o jogo parado.
         foreach (Behaviour acao in acoesDoJogador)
         {
             if (acao != null)
@@ -255,8 +241,6 @@ public class GerenciadorDeJogo : MonoBehaviour
             }
         }
     }
-
-    // Uma tela pode não existir na cena (ex: cena de teste sem tutorial).
     void Mostrar(GameObject tela, bool visivel)
     {
         if (tela != null)
@@ -265,7 +249,6 @@ public class GerenciadorDeJogo : MonoBehaviour
         }
     }
 
-    // Placar final mostrado nas telas de Vitória e de Game Over.
     void EscreverPontuacao(TMP_Text destino)
     {
         if (destino == null)
@@ -276,6 +259,23 @@ public class GerenciadorDeJogo : MonoBehaviour
         int pontos = SistemaDePontos.instancia != null ? SistemaDePontos.instancia.pontosAtuais : 0;
 
         destino.text = "PONTUAÇÃO FINAL: " + pontos;
+    }
+
+    void PararSomDeFim()
+    {
+        if (fonteDeAudio == null)
+        {
+            return;
+        }
+
+        if (MusicaDoJogo.instancia != null && MusicaDoJogo.instancia.fonteDeAudio == fonteDeAudio)
+        {
+            Debug.LogWarning("A fonte de áudio do GerenciadorDeJogo é a mesma da MusicaDoJogo. "
+                + "Use um AudioSource separado para os sons de vitória/derrota.");
+            return;
+        }
+
+        fonteDeAudio.Stop();
     }
 
     void TocarSom(AudioClip som)

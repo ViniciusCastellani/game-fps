@@ -269,6 +269,7 @@ GameObject:
   - component: {fileID: 1377789329308672036}
   - component: {fileID: 2171928133463234190}
   - component: {fileID: 602544677616699085}
+  - component: {fileID: 1617840427290036546}
   m_Layer: 0
   m_Name: Inimigo_perseguidor
   m_TagString: Inimigo
@@ -469,7 +470,7 @@ MonoBehaviour:
   prefabMedkit: {fileID: 2570095583279758076, guid: 916a4ec3e50f5954982d42cc22d508fb, type: 3}
   prefabMunicao: {fileID: 5107571238699567075, guid: 625151b0cbf6f4b44a992d43a4f7ac4c, type: 3}
   chanceDeDrop: 0.5
-  pontosAoMorrer: 10
+  pontosAoMorrer: 20
   gerenciadorDeOrdas: {fileID: 0}
 --- !u!114 &602544677616699085
 MonoBehaviour:
@@ -483,12 +484,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d7f29c1c03caa1b418514a990d0616e7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::InimigoAtaque
-  alcanceDeAtaque: 1.5
+  alcanceDeAtaque: 2
   histerese: 0.5
   pontoDoGolpe: {fileID: 0}
-  alcanceDoGolpe: 2
+  alcanceDoGolpe: 2.5
   anguloDoGolpe: 120
-  toleranciaVertical: 1.5
+  toleranciaVertical: 2
   dano: 10
   atrasoDoDano: 0.4
   duracaoDaAnimacao: 1.5
@@ -498,6 +499,25 @@ MonoBehaviour:
   somDeAtaque: {fileID: 8300000, guid: 384b9d792374c714a8ec14cddd7d655e, type: 3}
   animator: {fileID: 8271457946663828802}
   nomeDoTriggerDeAtaque: Atacar
+--- !u!114 &1617840427290036546
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2971115017558065501}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 87ce51461533480459af1e320bc17cac, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::InimigoSomDePassos
+  sonsDePasso:
+  - {fileID: 8300000, guid: 10e1e96145f0219488c7c2897679106d, type: 3}
+  volume: 0.9
+  intervaloEntrePassos: 0.5
+  velocidadeMinima: 0.3
+  distanciaMinima: 2
+  distanciaMaxima: 25
 --- !u!1 &3178069824548918605
 GameObject:
   m_ObjectHideFlags: 0

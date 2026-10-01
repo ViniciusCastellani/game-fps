@@ -60,8 +60,8 @@ public static class MontadorDeTelas
         CriarBotao(caixaGameOver, "BotaoReiniciar", "Reiniciar", -60f, gerenciador.ReiniciarFase);
         CriarBotao(caixaGameOver, "BotaoMenuPrincipal", "Menu Principal", -175f, gerenciador.VoltarAoMenu);
 
-        GameObject telaDeVitoria = CriarTela(canvasTelas.transform, "TelaDeVitoria", "STAGE CLEAR", new Color(1f, 0.8f, 0.2f),
-            "Fase concluída!", out TMP_Text textoDescricaoVitoria, out Transform caixaVitoria);
+        GameObject telaDeVitoria = CriarTela(canvasTelas.transform, "TelaDeVitoria", "ORDA CONCLUÍDA", new Color(1f, 0.8f, 0.2f),
+            "DEU CORINTHIANS!", out TMP_Text textoDescricaoVitoria, out Transform caixaVitoria);
         TMP_Text textoBotaoProximaFase = CriarBotao(caixaVitoria, "BotaoProximaFase", "Próxima Fase", -60f, gerenciador.ProximaFase);
         CriarBotao(caixaVitoria, "BotaoMenuPrincipal", "Menu Principal", -175f, gerenciador.VoltarAoMenu);
 

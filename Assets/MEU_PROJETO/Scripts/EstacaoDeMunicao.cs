@@ -14,8 +14,24 @@ public class EstacaoDeMunicao : MonoBehaviour
 
     private Arma armaDoJogador;
 
+    [Header("Sons")]
+    public AudioClip somSemPontos;
+    public AudioClip somDeCompra;
+    private AudioSource fonteDeAudio;
+
     void Start()
     {
+        fonteDeAudio = GetComponent<AudioSource>();
+
+        if (fonteDeAudio == null)
+        {
+            fonteDeAudio = gameObject.AddComponent<AudioSource>();
+        }
+
+        fonteDeAudio.playOnAwake = false;
+        fonteDeAudio.loop = false;
+        fonteDeAudio.spatialBlend = 0f; // 2D: feedback sempre audível
+
         AtualizarTexto();
 
         if (painelDeTexto != null)
@@ -77,10 +93,20 @@ public class EstacaoDeMunicao : MonoBehaviour
         if (!SistemaDePontos.instancia.GastarPontos(custoEmPontos))
         {
             Debug.Log("Pontos insuficientes pra usar a estação de munição.");
+            TocarSom(somSemPontos);
             return;
         }
 
         armaDoJogador.AdicionarMunicao(quantidadeDeMunicao);
+        TocarSom(somDeCompra);
+    }
+
+    void TocarSom(AudioClip som)
+    {
+        if (som != null && fonteDeAudio != null)
+        {
+            fonteDeAudio.PlayOneShot(som);
+        }
     }
 
     void AtualizarTexto()

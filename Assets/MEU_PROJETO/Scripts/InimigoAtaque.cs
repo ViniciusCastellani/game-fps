@@ -37,6 +37,9 @@ public class InimigoAtaque : MonoBehaviour
     private float proximoAtaquePermitidoEm = 0f;
     private bool atacando = false;
 
+    // Lido pelo InimigoSomDePassos para calar os passos durante o ataque.
+    public bool Atacando { get { return atacando; } }
+
     void Start()
     {
         GameObject objetoJogador = GameObject.FindWithTag("Jogador");

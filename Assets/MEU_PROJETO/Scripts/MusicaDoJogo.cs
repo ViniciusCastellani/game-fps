@@ -33,6 +33,15 @@ public class MusicaDoJogo : MonoBehaviour
         fonteDeAudio.Play();
     }
 
+    // Só toca se já não estiver tocando (não reinicia a música do começo).
+    public void GarantirTocando()
+    {
+        if (fonteDeAudio != null && !fonteDeAudio.isPlaying)
+        {
+            Tocar();
+        }
+    }
+
     public void Parar()
     {
         if (fonteDeAudio == null)
