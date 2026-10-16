@@ -10,6 +10,7 @@ public class JogadorMovimento : MonoBehaviour
     void Start()
     {
         jogador = GetComponent<Rigidbody>();
+        jogador.interpolation = RigidbodyInterpolation.Interpolate;
         velocidade = velocidadeAndar;
     }
     void Update()
@@ -18,19 +19,19 @@ public class JogadorMovimento : MonoBehaviour
     }
     void FixedUpdate()
     {
-        Andar();
         Correr();
+        Andar();
     }
     void MonitorarControles()
     {
         float horizontal = Input.GetAxis("Horizontal");
         float vertical = Input.GetAxis("Vertical");
-        direcao = transform.right * horizontal + transform.forward * vertical;
+        direcao = new Vector3(horizontal, 0f, vertical);
     }
 
     void Andar()
     {
-        velocidadeFinal = direcao * velocidade;
+        velocidadeFinal = jogador.rotation * direcao * velocidade;
         jogador.linearVelocity = new Vector3(velocidadeFinal.x,
         jogador.linearVelocity.y,
         velocidadeFinal.z);

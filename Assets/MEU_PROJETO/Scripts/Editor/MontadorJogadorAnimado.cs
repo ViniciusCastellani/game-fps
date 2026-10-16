@@ -147,6 +147,7 @@ public static class MontadorJogadorAnimado
         sm.defaultState = loco;
 
         var puloInicio = sm.AddState("PuloInicio"); puloInicio.motion = clipes["JumpStart"];
+        puloInicio.speed = 1f;
         var noAr = sm.AddState("NoAr");             noAr.motion = clipes["JumpAir"];
         var pouso = sm.AddState("Pouso");           pouso.motion = clipes["JumpLand"];
 

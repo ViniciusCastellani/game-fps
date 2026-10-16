@@ -24,9 +24,20 @@ public class JogadorTroncoCamera : MonoBehaviour
     private bool jaLogou;
     private Transform cabeca;
     private Vector3 escalaCabeca = Vector3.one;
+    private JogadorMovimentoCamera olhar;
+    private Quaternion rotacaoModeloNoJogador;
+    private AlternarCamera alternarCamera;
+    private Transform bracoEsquerdo;
+    private Transform bracoDireito;
+    private float pesoPrimeiraPessoa;
+    [Tooltip("Limite do tronco em primeira pessoa para evitar que entre na câmera.")]
+    [Range(0f, 60f)] public float limiteTroncoPrimeiraPessoa = 15f;
 
     void Start()
     {
+        olhar = GetComponent<JogadorMovimentoCamera>();
+        alternarCamera = GetComponent<AlternarCamera>();
+        pesoPrimeiraPessoa = alternarCamera != null && alternarCamera.PrimeiraPessoa ? 1f : 0f;
         if (animator == null) animator = GetComponentInChildren<Animator>();
         if (cameraJogador == null && Camera.main != null) cameraJogador = Camera.main.transform;
 
@@ -38,12 +49,15 @@ public class JogadorTroncoCamera : MonoBehaviour
         }
 
         animator.cullingMode = AnimatorCullingMode.AlwaysAnimate;
+        rotacaoModeloNoJogador = Quaternion.Inverse(transform.rotation) * animator.transform.rotation;
 
         AdicionarOsso(HumanBodyBones.Spine);
         AdicionarOsso(HumanBodyBones.Chest);
         AdicionarOsso(HumanBodyBones.UpperChest);
 
         quadril = animator.GetBoneTransform(HumanBodyBones.Hips);
+        bracoEsquerdo = animator.GetBoneTransform(HumanBodyBones.LeftUpperArm);
+        bracoDireito = animator.GetBoneTransform(HumanBodyBones.RightUpperArm);
         cabeca = animator.GetBoneTransform(HumanBodyBones.Head);
         if (cabeca != null) escalaCabeca = cabeca.localScale;
     }
@@ -58,18 +72,36 @@ public class JogadorTroncoCamera : MonoBehaviour
     {
         if (ossos.Count == 0) return;
 
+        // O corpo visual acompanha o mesmo yaw da mira; o Rigidbody continua no passo físico.
+        // Não escreva no Transform físico quando o Animator estiver na própria raiz.
+        if (olhar != null && animator.transform != transform)
+            animator.transform.rotation = Quaternion.Euler(0f, olhar.RotacaoHorizontal, 0f)
+                * rotacaoModeloNoJogador;
+
         if (centralizarCorpo && quadril != null) CentralizarCorpo();
 
-        float pitch = Mathf.DeltaAngle(0f, cameraJogador.localEulerAngles.x);
+        // Use o input atual, sem depender da câmera processada pelo Cinemachine no LateUpdate.
+        float pitch = olhar != null
+            ? olhar.RotacaoVertical
+            : Mathf.DeltaAngle(0f, cameraJogador.localEulerAngles.x);
         float angulo = Mathf.Clamp(pitch * fracaoDoOlhar, -anguloMaximo, anguloMaximo);
+        pesoPrimeiraPessoa = Mathf.MoveTowards(pesoPrimeiraPessoa,
+            alternarCamera != null && alternarCamera.PrimeiraPessoa ? 1f : 0f, Time.deltaTime / 0.2f);
+        float anguloTronco = Mathf.Lerp(angulo,
+            Mathf.Clamp(angulo, -limiteTroncoPrimeiraPessoa, limiteTroncoPrimeiraPessoa), pesoPrimeiraPessoa);
 
         Vector3 eixo = animator.transform.right;
-        float porOsso = angulo / ossos.Count;
+        float porOsso = anguloTronco / ossos.Count;
         foreach (Transform osso in ossos)
             osso.rotation = Quaternion.AngleAxis(porOsso, eixo) * osso.rotation;
 
+        // Preserve a direção da mira sem inclinar o peito até atravessar a câmera.
+        Quaternion compensacao = Quaternion.AngleAxis(angulo - anguloTronco, eixo);
+        if (bracoEsquerdo != null) bracoEsquerdo.rotation = compensacao * bracoEsquerdo.rotation;
+        if (bracoDireito != null) bracoDireito.rotation = compensacao * bracoDireito.rotation;
+
         if (cabeca != null)
-            cabeca.localScale = esconderCabeca ? Vector3.zero : escalaCabeca;
+            cabeca.localScale = esconderCabeca && alternarCamera == null ? Vector3.zero : escalaCabeca;
     }
 
     void CentralizarCorpo()
