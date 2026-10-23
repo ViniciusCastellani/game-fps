@@ -7,6 +7,8 @@ public class JogadorMovimento : MonoBehaviour
     private Vector3 direcao;
     private Vector3 velocidadeFinal;
     private Rigidbody jogador;
+    // Velocidade comandada antes de o solver de colisao reduzir o movimento.
+    public Vector3 VelocidadeHorizontalPlanejada => velocidadeFinal;
     void Start()
     {
         jogador = GetComponent<Rigidbody>();

@@ -1,0 +1,57 @@
+Validação da arma laser em Play Mode
+Passed; passed=11; failed=0; skipped=0
+
+Regressão de hitboxes: antes da correção, os 3 testes de gatilhos falharam (vida permaneceu em 100); depois, todos os 8 testes passaram.
+Regressão de alinhamento: com o layout da mira TPS, os 3 novos testes falharam antes da correção (desvio de aproximadamente 33 pixels e alvo sob a mira sem dano).
+Resultado atual: os 11 testes passaram. O impacto deve ficar a menos de 0,5 pixel do centro visual da mira. Foram verificadas mudanças de escala, viewport e câmera e Canvas em Screen Space Camera.
+
+Saída do Unity:
+
+CoberturaNaFrenteDoCanoBloqueiaODano: Passed
+
+Acertou: CoberturaTeste
+Error reason is 'NoSubscription' and no additional error information was provided (https://generators.ai.unity.com).
+
+FeixeApagaEReutilizaOsRenderizadores: Passed
+
+
+HitboxFilhaSemTagCausaDanoNoInimigoPai: Passed
+
+Acertou: HitboxFilhaSemTag
+AlvoTeste recebeu 10 de dano.
+
+MiraAcompanhaEscalaDoCanvasViewportECamera: Passed
+
+
+MiraDoCanvasComPivoNoCantoAlinhaFeixeEDano: Passed
+
+Acertou: AlvoTeste
+AlvoTeste recebeu 10 de dano.
+
+MiraScreenSpaceCameraUsaCameraDoCanvas: Passed
+
+
+SemMunicaoOuRecarregandoNaoEmiteLaser: Passed
+
+Sem munição!
+Error reason is 'NoSubscription' and no additional error information was provided (https://generators.ai.unity.com).
+
+TiroAcertaHitboxDoPrefabRealMesmoComGatilhosGlobaisDesativados: Passed
+
+Acertou: Inimigo_perseguidor(Clone)
+Inimigo_perseguidor(Clone) recebeu 10 de dano.
+There are no audio listeners in the scene. Please ensure there is always one audio listener in the scene
+
+TiroCausaDanoEIgnoraJogadorEGatilhos: Passed
+
+Acertou: AlvoTeste
+AlvoTeste recebeu 10 de dano.
+
+TiroParaNoPrimeiroInimigoComHitboxGatilho: Passed
+
+Acertou: AlvoTeste
+AlvoTeste recebeu 10 de dano.
+
+TiroSemAlvoMostraFeixeAteOAlcance: Passed
+
+

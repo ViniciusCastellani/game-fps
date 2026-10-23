@@ -1,0 +1,14 @@
+BolaColideComBarreiraEmAltaVelocidade: Passed
+
+Maximum ball center Z: 1,650; wall front Z: 1,800
+
+BolaRolaEDesaceleraSemAtravessarOChao: Passed
+
+
+CorrendoEmpurraMaisForteQueAndando: Passed
+
+Walking peak: 4,827 m/s; running peak: 8,303 m/s
+
+JogadorParadoNaoDaImpulso: Passed
+
+

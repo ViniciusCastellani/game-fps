@@ -1,0 +1,352 @@
+[
+  {
+    "prefab": "FaixaTorcida",
+    "position": [
+      -27.0,
+      -22.86199151428463,
+      3873.8
+    ],
+    "yaw": 180,
+    "scale": [
+      1,
+      1,
+      1
+    ]
+  },
+  {
+    "prefab": "PlacaDerby",
+    "position": [
+      30.0,
+      -22.86199151428463,
+      3873.8
+    ],
+    "yaw": 180,
+    "scale": [
+      1,
+      1,
+      1
+    ]
+  },
+  {
+    "prefab": "FaixaTorcida",
+    "position": [
+      55.0,
+      -22.86199151428463,
+      3873.8
+    ],
+    "yaw": 180,
+    "scale": [
+      1,
+      1,
+      1
+    ]
+  },
+  {
+    "prefab": "FaixaTorcida",
+    "position": [
+      -27.0,
+      -22.861988535950886,
+      3944.0
+    ],
+    "yaw": 0,
+    "scale": [
+      1,
+      1,
+      1
+    ]
+  },
+  {
+    "prefab": "PlacaDerby",
+    "position": [
+      8.0,
+      -22.861988535950882,
+      3944.0
+    ],
+    "yaw": 0,
+    "scale": [
+      1,
+      1,
+      1
+    ]
+  },
+  {
+    "prefab": "FaixaTorcida",
+    "position": [
+      43.0,
+      -22.861988535950882,
+      3944.0
+    ],
+    "yaw": 0,
+    "scale": [
+      1,
+      1,
+      1
+    ]
+  },
+  {
+    "prefab": "BalizadorArena",
+    "position": [
+      -33.0,
+      -22.86199150155671,
+      3874.1
+    ],
+    "yaw": 0,
+    "scale": [
+      1,
+      1,
+      1
+    ]
+  },
+  {
+    "prefab": "BalizadorArena",
+    "position": [
+      -33.0,
+      -22.861988552921446,
+      3943.6
+    ],
+    "yaw": 0,
+    "scale": [
+      1,
+      1,
+      1
+    ]
+  },
+  {
+    "prefab": "BalizadorArena",
+    "position": [
+      49.0,
+      -22.861991501556705,
+      3874.1
+    ],
+    "yaw": 0,
+    "scale": [
+      1,
+      1,
+      1
+    ]
+  },
+  {
+    "prefab": "BalizadorArena",
+    "position": [
+      49.0,
+      -22.861988552921446,
+      3943.6
+    ],
+    "yaw": 0,
+    "scale": [
+      1,
+      1,
+      1
+    ]
+  },
+  {
+    "prefab": "BandeirinhaEscanteio",
+    "position": [
+      71.19562358816209,
+      -22.861988658032192,
+      3941.1225159385995
+    ],
+    "yaw": 0,
+    "scale": [
+      1,
+      1,
+      1
+    ]
+  },
+  {
+    "prefab": "BandeirinhaEscanteio",
+    "position": [
+      71.73120308864608,
+      -22.8619913826047,
+      3876.9037256881784
+    ],
+    "yaw": 0,
+    "scale": [
+      1,
+      1,
+      1
+    ]
+  },
+  {
+    "prefab": "BandeirinhaEscanteio",
+    "position": [
+      -49.034896159155906,
+      -22.861988681985196,
+      3940.557938179749
+    ],
+    "yaw": 180,
+    "scale": [
+      1,
+      1,
+      1
+    ]
+  },
+  {
+    "prefab": "BandeirinhaEscanteio",
+    "position": [
+      -48.505009285110894,
+      -22.86199140683167,
+      3876.3326905364947
+    ],
+    "yaw": 180,
+    "scale": [
+      1,
+      1,
+      1
+    ]
+  },
+  {
+    "prefab": "CoberturaCentralBaixa",
+    "position": [
+      -10.0,
+      -22.861990572418403,
+      3896.0
+    ],
+    "yaw": 0,
+    "scale": [
+      1.45,
+      1.45,
+      1.45
+    ]
+  },
+  {
+    "prefab": "CoberturaCentralAlta",
+    "position": [
+      -10.0,
+      -22.861990457867105,
+      3898.7
+    ],
+    "yaw": 0,
+    "scale": [
+      1.45,
+      1.45,
+      1.45
+    ]
+  },
+  {
+    "prefab": "CoberturaCentralBaixa",
+    "position": [
+      -7.8,
+      -22.86199062333009,
+      3894.8
+    ],
+    "yaw": 90,
+    "scale": [
+      1.45,
+      1.45,
+      1.45
+    ]
+  },
+  {
+    "prefab": "CoberturaCentralAlta",
+    "position": [
+      0.0,
+      -22.861990063301523,
+      3908.0
+    ],
+    "yaw": 90,
+    "scale": [
+      1.45,
+      1.45,
+      1.45
+    ]
+  },
+  {
+    "prefab": "CoberturaCentralBaixa",
+    "position": [
+      2.7,
+      -22.861990063301523,
+      3908.0
+    ],
+    "yaw": 90,
+    "scale": [
+      1.45,
+      1.45,
+      1.45
+    ]
+  },
+  {
+    "prefab": "CoberturaCentralBaixa",
+    "position": [
+      3.9,
+      -22.861989969963428,
+      3910.2
+    ],
+    "yaw": 0,
+    "scale": [
+      1.45,
+      1.45,
+      1.45
+    ]
+  },
+  {
+    "prefab": "CoberturaCentralBaixa",
+    "position": [
+      23.0,
+      -22.861989808743083,
+      3914.0
+    ],
+    "yaw": 0,
+    "scale": [
+      1.45,
+      1.45,
+      1.45
+    ]
+  },
+  {
+    "prefab": "CoberturaCentralAlta",
+    "position": [
+      23.0,
+      -22.861989694191784,
+      3916.7
+    ],
+    "yaw": 0,
+    "scale": [
+      1.45,
+      1.45,
+      1.45
+    ]
+  },
+  {
+    "prefab": "CoberturaCentralAlta",
+    "position": [
+      43.0,
+      -22.861989511758235,
+      3921.0
+    ],
+    "yaw": 90,
+    "scale": [
+      1.45,
+      1.45,
+      1.45
+    ]
+  },
+  {
+    "prefab": "CoberturaCentralBaixa",
+    "position": [
+      45.7,
+      -22.861989511758235,
+      3921.0
+    ],
+    "yaw": 90,
+    "scale": [
+      1.45,
+      1.45,
+      1.45
+    ]
+  },
+  {
+    "prefab": "BolaFutebol",
+    "position": [
+      7.95,
+      -22.576989969963428,
+      3910.2
+    ],
+    "yaw": 0,
+    "scale": [
+      1,
+      1,
+      1
+    ]
+  }
+]
