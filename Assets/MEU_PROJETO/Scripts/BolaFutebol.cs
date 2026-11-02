@@ -19,6 +19,32 @@ public class BolaFutebol : MonoBehaviour
     private Vector3 posicaoInicial;
     private float proximoToque;
     private float ultimoContatoSolo = float.NegativeInfinity;
+    public bool ComemorandoGol { get; private set; }
+
+    public bool SuspenderParaGol()
+    {
+        if (ComemorandoGol) return false;
+        ComemorandoGol = true;
+        corpo.linearVelocity = Vector3.zero;
+        corpo.angularVelocity = Vector3.zero;
+        corpo.isKinematic = true;
+        corpo.detectCollisions = false;
+        return true;
+    }
+
+    public void Reiniciar(Vector3 posicao)
+    {
+        corpo.position = posicao;
+        corpo.rotation = Quaternion.identity;
+        corpo.isKinematic = false;
+        corpo.detectCollisions = true;
+        corpo.linearVelocity = Vector3.zero;
+        corpo.angularVelocity = Vector3.zero;
+        ultimoContatoSolo = float.NegativeInfinity;
+        proximoToque = Time.fixedTime + intervaloEntreToques;
+        ComemorandoGol = false;
+        corpo.WakeUp();
+    }
 
     void Awake()
     {
@@ -30,13 +56,11 @@ public class BolaFutebol : MonoBehaviour
 
     void FixedUpdate()
     {
+        if (ComemorandoGol) return;
         // A bola volta ao ponto inicial caso caia para fora da geometria do estadio.
         if (corpo.position.y < posicaoInicial.y - 12f)
         {
-            corpo.position = posicaoInicial;
-            corpo.linearVelocity = Vector3.zero;
-            corpo.angularVelocity = Vector3.zero;
-            ultimoContatoSolo = float.NegativeInfinity;
+            Reiniciar(posicaoInicial);
             return;
         }
 
@@ -59,6 +83,7 @@ public class BolaFutebol : MonoBehaviour
 
     void ProcessarContato(Collision contato)
     {
+        if (ComemorandoGol) return;
         Rigidbody jogador = contato.rigidbody;
         if (jogador == null || !jogador.CompareTag("Jogador"))
         {

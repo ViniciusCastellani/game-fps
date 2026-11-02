@@ -1,0 +1,31 @@
+ILUMINACAO POR HORDA — Estadio_TPS_Backup_Visual
+
+Horda 1: dia, sol alto e luz clara.
+Horda 2 e seguintes: tarde, sol baixo, luz quente e sombras alongadas.
+A transicao comeca ao clicar em Proxima Fase, durante os 5 segundos de
+preparacao, e dura 3 segundos, inclusive se o jogo for pausado.
+Ao reiniciar uma horda, o periodo correto e aplicado imediatamente.
+
+Configuracao: Directional Light > IluminacaoPorOrda.
+Dia e Tarde permitem ajustar rotacao, cor e intensidade do sol, iluminacao
+ambiente, tonalidade e exposicao do ceu. Duracao Transicao controla a passagem.
+GerenciadorDeOrdas referencia esse componente apenas na cena de backup.
+O material do ceu e copiado em runtime, preservando o asset original.
+
+Validacao automatizada: suite Derby.Bola.PlayModeTests, teste
+HordasMudamPeriodoEReinicioNaSegundaComecaDeTarde.
+Verifica integracao com o inicio das hordas, transicao gradual, periodo correto
+no reinicio da horda 2 e preservacao do material original do ceu.
+
+Validacao manual:
+1. Iniciar a cena na horda 1; conferir luz de dia.
+2. Concluir a horda e clicar em Proxima Fase.
+3. Durante a preparacao da horda 2, conferir tons quentes e sol baixo.
+4. Reiniciar durante a horda 2; conferir iluminacao de tarde desde o inicio.
+
+Teste de integracao adicional: BackupPassaDaVitoriaParaSegundaHordaComMudancaVisivel.
+Carrega a cena real, conclui a primeira horda e aciona ProximaFase. Confere
+que a imagem da camera muda durante a preparacao, que o controle se recupera
+ao ser reativado e que a horda 2 inicia com 10 inimigos e iluminacao de tarde.
+Capturas comparativas: Library/IluminacaoPorOrda/jogo_horda_1.png e jogo_horda_2.png.
+Menu Derby > Cenario TPS > Comparar iluminacao das hordas gera previas adicionais.

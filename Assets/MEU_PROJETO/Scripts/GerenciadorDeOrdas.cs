@@ -18,6 +18,10 @@ public class GerenciadorDeOrdas : MonoBehaviour
 
     public float tempoEntreOrdas = 5f;
 
+    [Header("Iluminacao (opcional)")]
+    public IluminacaoPorOrda iluminacao;
+    private bool iniciouAlgumaOrda;
+
     [SerializeField] private GerenciadorDeJogo gerenciadorDeJogo;
     [SerializeField] private Cronometro cronometro;
 
@@ -52,11 +56,14 @@ public class GerenciadorDeOrdas : MonoBehaviour
     public void IniciarProximaOrda()
     {
         ordaAtual++;
+        if (iluminacao != null) iluminacao.AplicarOrda(NumeroDaOrdaAtual);
         StartCoroutine(EsperarProximaOrda());
     }
 
     void IniciarOrda(int indiceOrda)
     {
+        if (iluminacao != null) iluminacao.AplicarOrda(indiceOrda + 1, !iniciouAlgumaOrda);
+        iniciouAlgumaOrda = true;
         AtualizarTexto("ORDA " + (indiceOrda + 1) + " / " + ordas.Length);
         cronometro.Iniciar();
 

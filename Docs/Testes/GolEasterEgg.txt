@@ -1,0 +1,34 @@
+EASTER EGG DE GOL — Estadio_TPS_Backup_Visual
+
+Configuracao:
+- Hierarchy > EasterEgg_Gol > componente GolEasterEgg.
+- pontosPorGol: recompensa por gol (padrao: 100 pontos).
+- somVuvuzela: clip de vuvuzela sintetizada disparado ao marcar gol.
+- volumeVuvuzela: volume do efeito entre 0 e 1 (padrao: 0,65).
+- tempoParaReiniciar: espera antes do retorno da bola (padrao: 1,5 segundo).
+- CentroDoCampo_RetornoBola: ponto de retorno com folga para o raio da bola.
+- TriggerGol_Oeste / TriggerGol_Leste: BoxColliders internos aos dois gols.
+
+Comportamento:
+Apenas a bola referenciada pode ativar o gol. O sistema credita pontos no
+SistemaDePontos existente, mostra GOL! +X PONTOS e dispara confetes coloridos.
+A bola fica suspensa durante a comemoracao para evitar repeticoes; depois
+retorna ao centro, com velocidade linear e angular zeradas e colisao restaurada.
+Desativar o sistema durante a comemoracao tambem libera e reposiciona a bola.
+
+Validacao automatizada:
+Menu Derby > Bola de futebol > Testar fisica em Play Mode.
+A suite Derby.Bola.PlayModeTests inclui os quatro testes de fisica existentes e
+TriggersPremiamUmaVezReiniciamBolaEPermitemNovoGol. Esse teste verifica os dois
+sentidos de entrada, recompensa configuravel de 137 pontos, rejeicao de outros
+corpos, bloqueio de recompensa duplicada, criacao das particulas, retorno sem
+movimento, novo gol apos reinicio e desativacao durante a comemoracao.
+Resultados em Library/BolaFutebolTests/results.xml.
+
+Verificacao manual:
+1. Abrir a cena Estadio_TPS_Backup_Visual e entrar em Play Mode.
+2. Conduzir a bola para dentro de qualquer um dos dois gols.
+3. Conferir +100 no HUD, mensagem de gol, confetes e som de vuvuzela.
+   O som deve tocar uma vez por gol e terminar naturalmente apos 2,6 segundos.
+4. Aguardar 1,5 segundo e conferir a bola parada no circulo central.
+5. Fazer outro gol; deve creditar apenas mais uma recompensa.
