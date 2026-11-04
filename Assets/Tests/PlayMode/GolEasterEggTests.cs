@@ -31,7 +31,7 @@ public class GolEasterEggTests
             }
             if (score == null) score = Create("PontosTeste").AddComponent(scoreType);
             initial = (int)scoreType.GetField("pontosAtuais").GetValue(score);
-            var prefab = AssetDatabase.LoadAssetAtPath<GameObject>("Assets/MEU_PROJETO/CenarioTPS/Prefabs/BolaFutebol.prefab");
+            var prefab = AssetDatabase.LoadAssetAtPath<GameObject>("Assets/DerbySegundoTempo/Cenarios/Estadio/Prefabs/BolaFutebol.prefab");
             var ball = UnityEngine.Object.Instantiate(prefab, new Vector3(0, 1, 0), Quaternion.identity);
             SceneManager.MoveGameObjectToScene(ball, scene);
             var body = ball.GetComponent<Rigidbody>();
@@ -46,8 +46,8 @@ public class GolEasterEggTests
             goalType.GetField("pontosPorGol").SetValue(goal, 137);
             goalType.GetField("tempoParaReiniciar").SetValue(goal, .1f);
             goalType.GetField("materialConfete").SetValue(goal,
-                AssetDatabase.LoadAssetAtPath<Material>("Assets/MEU_PROJETO/CenarioTPS/Materiais/ConfetesGol.mat"));
-            var vuvuzela = AssetDatabase.LoadAssetAtPath<AudioClip>("Assets/MEU_PROJETO/CenarioTPS/Audio/VuvuzelaGol.wav");
+                AssetDatabase.LoadAssetAtPath<Material>("Assets/DerbySegundoTempo/Cenarios/Estadio/Materiais/ConfetesGol.mat"));
+            var vuvuzela = AssetDatabase.LoadAssetAtPath<AudioClip>("Assets/DerbySegundoTempo/Cenarios/Estadio/Audio/VuvuzelaGol.wav");
             Assert.IsNotNull(vuvuzela);
             Assert.Greater(vuvuzela.length, 2f);
             goalType.GetField("somVuvuzela").SetValue(goal, vuvuzela);

@@ -9,8 +9,8 @@ import numpy as np
 import yaml
 from derby_scene_geometry import mesh_data, pitch_corners, trans
 
-ROOT = Path('Assets/MEU_PROJETO/CenarioTPS')
-SCENE = Path('Assets/Scenes/Estadio_TPS_Backup_Visual.unity')
+ROOT = Path('Assets/DerbySegundoTempo/Cenarios/Estadio')
+SCENE = Path('Assets/DerbySegundoTempo/Cenas/Fases/Estadio_TPS_Backup_Visual.unity')
 
 
 def documents(path):
@@ -75,7 +75,7 @@ class VisualSceneChecks(unittest.TestCase):
 
     def test_no_floating_flags_or_unresolved_local_references(self):
         scene = SCENE.read_text()
-        self.assertEqual(scene.count('m_SourcePrefab:'), Path('Assets/Scenes/Estadio_TPS.unity').read_text().count('m_SourcePrefab:') + 26)
+        self.assertEqual(scene.count('m_SourcePrefab:'), Path('Assets/DerbySegundoTempo/Cenas/Arquivo/Estadio_TPS.unity').read_text().count('m_SourcePrefab:') + 26)
         self.assertFalse((ROOT / 'Prefabs' / 'BandeiraTorcida.prefab').exists())
         for path in [SCENE, *(ROOT / 'Prefabs').glob('*.prefab'), *(ROOT / 'Materiais').glob('*.mat'), *(ROOT / 'Malhas').glob('*.asset')]:
             documents(path)

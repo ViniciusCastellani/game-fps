@@ -20,7 +20,7 @@ public class BolaFutebolTests
     {
         scene = SceneManager.CreateScene("TesteIsoladoBola", new CreateSceneParameters(LocalPhysicsMode.Physics3D));
         physics = scene.GetPhysicsScene();
-        prefab = AssetDatabase.LoadAssetAtPath<GameObject>("Assets/MEU_PROJETO/CenarioTPS/Prefabs/BolaFutebol.prefab");
+        prefab = AssetDatabase.LoadAssetAtPath<GameObject>("Assets/DerbySegundoTempo/Cenarios/Estadio/Prefabs/BolaFutebol.prefab");
         Assert.NotNull(prefab);
         var floor = GameObject.CreatePrimitive(PrimitiveType.Cube);
         SceneManager.MoveGameObjectToScene(floor, scene);

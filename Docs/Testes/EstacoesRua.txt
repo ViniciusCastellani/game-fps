@@ -1,0 +1,16 @@
+Estacoes urbanas de Rua_TPS
+
+Instaladas: 2 oficinas, farmacia e deposito de recarga.
+Prefabs variantes dos originais; mesmos componentes, precos, teclas e sons do estadio.
+Gatilhos frontais, colisao fisica e carving de navegacao configurados.
+Loja rapida global desativada somente na rua para evitar compras duplicadas nas teclas 1 e 2.
+
+Passed; passou=2; falhou=0; ignorado=0
+
+Testes: gatilhos reais de proximidade, abertura/fechamento de painel, dano, capacidade do pente, cura, municao, desconto de pontos e recusa por falta de saldo. Loja global permanece desativada apos pausar e continuar.
+
+Verificacao adicional: cena do estadio preservada por SHA-256; transformacao, malha e BoxCollider de BloqueioDaRua_70 identicos ao inicio da tarefa.
+
+Prefabs: Assets/DerbySegundoTempo/Prefabs/Estacoes/Rua
+Previas: Docs/Previews/Rua
+Guia: Docs/EstacoesRua.md

@@ -25,7 +25,7 @@ public class BackupIluminacaoTests
         escala = Time.timeScale;
         void Ativar(Scene carregada, LoadSceneMode modo)
         {
-            if (carregada.path == "Assets/Scenes/Estadio_TPS_Backup_Visual.unity")
+            if (carregada.path == "Assets/DerbySegundoTempo/Cenas/Fases/Estadio_TPS_Backup_Visual.unity")
             {
                 cena = carregada;
                 SceneManager.SetActiveScene(cena);
@@ -35,7 +35,7 @@ public class BackupIluminacaoTests
         try
         {
             yield return EditorSceneManager.LoadSceneAsyncInPlayMode(
-                "Assets/Scenes/Estadio_TPS_Backup_Visual.unity", new LoadSceneParameters(LoadSceneMode.Additive));
+                "Assets/DerbySegundoTempo/Cenas/Fases/Estadio_TPS_Backup_Visual.unity", new LoadSceneParameters(LoadSceneMode.Additive));
         }
         finally { SceneManager.sceneLoaded -= Ativar; }
         yield return null;

@@ -1,0 +1,17 @@
+Organizacao do projeto - 2026-11-03
+
+Cenas do build: TelaInicial -> Estadio_TPS_Backup_Visual -> Rua_TPS; TelaPausa preservada.
+Hierarquia: sistemas, jogador, cameras, cenario, jogabilidade, iluminacao, interface e audio.
+Cena Rua_TPS: base urbana jogavel, estacoes, coberturas e NavMesh do tipo Inimigo.
+
+Validacoes:
+- 8 testes Python de geometria e referencias do estadio: OK.
+- CampanhaTests.MenuEstadioRuaVitoriaPausaEReinicioFuncionam: Passed (1/1).
+- Campanha: menu, hordas, troca para a rua, telas, pausa, vitoria final, reinicio na horda e nova campanha.
+- Pontos de spawn nas NavMeshs corretas e caminhos completos ate o jogador, nas duas fases.
+- 10 GUIDs principais comparados com HEAD do Git: preservados.
+- GUID original da Rua_TPS: preservado.
+- Previas renderizadas pelo Unity em Docs/Previews/Rua.
+
+Os pacotes importados preservam a estrutura interna. A rua possui arte inicial em blocos; o modelo de cidade importado esta em Arte/Modelos para evolucao posterior.
+Relatorios completos e copias anteriores das cenas: Library/Organizacao (local).

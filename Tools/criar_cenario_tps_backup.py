@@ -6,7 +6,7 @@ import struct
 import re, math, uuid, json, sys
 import numpy as np
 from PIL import Image, ImageDraw, ImageFont
-ROOT=Path('Assets/MEU_PROJETO/CenarioTPS')
+ROOT=Path('Assets/DerbySegundoTempo/Cenarios/Estadio')
 HEADER='%YAML 1.1\n%TAG !u! tag:unity3d.com,2011:\n'
 def guid(p):return uuid.uuid5(uuid.NAMESPACE_URL,'derby-tps-visual/'+str(p)).hex
 def meta(p,kind='DefaultImporter'):
@@ -99,7 +99,7 @@ for args in [('Derby','DERBY','SEGUNDO TEMPO  /  ARENA 01'),('Torcida','ATE O AP
 # Mesh plano com UV explicitas: toda arte usa a mesma frente -Z e topo +Y.
 # Reutiliza o formato de um Mesh nativo presente no proprio projeto.
 mesh_path=ROOT/'Malhas'/'PainelUV.asset'
-template=Path('Assets/MEU_PROJETO/Packages/JMO Assets/Cartoon FX Remaster/CFXR Assets/Graphics/cfxr star mesh.asset').read_text()
+template=Path('Assets/Terceiros/JMO Assets/Cartoon FX Remaster/CFXR Assets/Graphics/cfxr star mesh.asset').read_text()
 vertices=[(-.5,-.5,0,0,0,-1,0,0),(.5,-.5,0,0,0,-1,1,0),(.5,.5,0,0,0,-1,1,1),(-.5,.5,0,0,0,-1,0,1)]
 vertex_data=b''.join(struct.pack('<8f',*v) for v in vertices)
 mesh=template.replace('m_Name: cfxr star mesh','m_Name: PainelUV')
@@ -260,7 +260,7 @@ P[p.name]=p.save()
 # Reutiliza as barreiras do projeto com colisor e carving nativo de NavMesh.
 # Os prefabs e a malha de navegacao originais continuam intactos.
 for name,index in [('CoberturaCentralBaixa',1),('CoberturaCentralAlta',2)]:
- source_barrier=Path(f'Assets/MEU_PROJETO/Packages/Abandoned World/Metal and Concrete Barrier/Prefabs/Concrete_Barrier_{index}.prefab')
+ source_barrier=Path(f'Assets/Terceiros/Abandoned World/Metal and Concrete Barrier/Prefabs/Concrete_Barrier_{index}.prefab')
  data=source_barrier.read_text()
  go_id=int(re.search(r'--- !u!1 &(-?\d+)',data)[1])
  root_id=int(re.search(r'--- !u!4 &(-?\d+)',data)[1])
@@ -287,7 +287,7 @@ NavMeshObstacle:
  target=ROOT/'Prefabs'/f'{name}.prefab';target.write_text(data);meta(target,'PrefabImporter')
  P[name]=guid(target);PREFAB_ROOTS[name]=root_id
 # Calcula matrizes completas do prefab importado, evitando assumir escala 1.
-s=Path('Assets/MEU_PROJETO/Prefabs/soccer_stadium.prefab').read_text();gos={};ts={}
+s=Path('Assets/DerbySegundoTempo/Prefabs/Cenario/Estadio.prefab').read_text();gos={};ts={}
 for d in re.split(r'(?=^--- !u!)',s,flags=re.M):
  h=re.match(r'--- !u!(\d+) &(-?\d+)',d)
  if not h:continue
@@ -302,7 +302,7 @@ for d in re.split(r'(?=^--- !u!)',s,flags=re.M):
 def world(i):
  g,f,m=ts[i];return world(f)@m if f else m
 items={gos[g]:world(i) for i,(g,f,m) in ts.items()}
-source=Path('Assets/Scenes/Estadio_TPS.unity');scene=source.read_text();addition='';instances=[];placements=[]
+source=Path('Assets/DerbySegundoTempo/Cenas/Arquivo/Estadio_TPS.unity');scene=source.read_text();addition='';instances=[];placements=[]
 def place(name,pos,yaw=0,scale=(1,1,1)):
  global addition
  i=810000000+len(instances)*10;instances.append(i);pg=P[name];a=math.radians(yaw)/2;root_id=PREFAB_ROOTS.get(name,1001)
@@ -404,9 +404,9 @@ scene=scene[:instance_end]+overrides+scene[instance_end:]
 # Preserva a luz e a atmosfera originais: a remocao de nevoa extra mantem a leitura do combate.
 marker='--- !u!1660057539 &9223372036854775807'
 scene=scene.replace(marker,root+addition+marker);scene+='  - {fileID: 809999991}\n'
-out=Path('Assets/Scenes/Estadio_TPS_Backup_Visual.unity');out.write_text(scene);meta(out)
+out=Path('Assets/DerbySegundoTempo/Cenas/Fases/Estadio_TPS_Backup_Visual.unity');out.write_text(scene);meta(out)
 # Um bake feito na copia deve continuar independente dos dados usados pela cena original.
-own_nav=Path('Assets/Scenes/Estadio_TPS_Backup_Visual/NavMesh-NavMesh Surface.asset')
+own_nav=Path('Assets/DerbySegundoTempo/Cenas/Fases/Estadio_TPS_Backup_Visual/NavMesh-NavMesh Surface.asset')
 if own_nav.exists():
  own_guid=re.search(r'^guid: (\w+)',Path(str(own_nav)+'.meta').read_text(),re.M)[1]
  scene=scene.replace('m_NavMeshData: {fileID: 23800000, guid: 2a5b713bf8ea2aa4a96ebec1c50566a8, type: 2}',f'm_NavMeshData: {{fileID: 23800000, guid: {own_guid}, type: 2}}')

@@ -1,11 +1,11 @@
 from pathlib import Path
 import json,struct,re
 import numpy as np
-b=Path('Assets/MEU_PROJETO/Modelos/soccer_stadium.glb').read_bytes();l=struct.unpack_from('<I',b,12)[0];j=json.loads(b[20:20+l]);off=20+l;blen=struct.unpack_from('<I',b,off)[0];binary=b[off+8:off+8+blen]
+b=Path('Assets/DerbySegundoTempo/Arte/Modelos/soccer_stadium.glb').read_bytes();l=struct.unpack_from('<I',b,12)[0];j=json.loads(b[20:20+l]);off=20+l;blen=struct.unpack_from('<I',b,off)[0];binary=b[off+8:off+8+blen]
 def accessor(i):
  a=j['accessors'][i];v=j['bufferViews'][a['bufferView']];dtype={5126:'<f4',5125:'<u4',5123:'<u2',5121:'u1'}[a['componentType']];n={'SCALAR':1,'VEC2':2,'VEC3':3,'VEC4':4}[a['type']];o=v.get('byteOffset',0)+a.get('byteOffset',0);stride=v.get('byteStride',n*np.dtype(dtype).itemsize)
  return np.ndarray((a['count'],n),dtype=dtype,buffer=binary,offset=o,strides=(stride,np.dtype(dtype).itemsize)).copy()
-s=Path('Assets/MEU_PROJETO/Prefabs/soccer_stadium.prefab').read_text();go={};ts={}
+s=Path('Assets/DerbySegundoTempo/Prefabs/Cenario/Estadio.prefab').read_text();go={};ts={}
 for d in re.split(r'(?=^--- !u!)',s,flags=re.M):
  h=re.match(r'--- !u!(\d+) &(-?\d+)',d)
  if not h:continue

@@ -30,7 +30,7 @@ public class ArmaLaserTests
         weaponType=Type.GetType("Arma, Assembly-CSharp",true);
         emitterType=Type.GetType("EmissorLaser, Assembly-CSharp",true);
         weapon=player.AddComponent(weaponType);((Behaviour)weapon).enabled=false;
-        var prefab=AssetDatabase.LoadAssetAtPath<GameObject>("Assets/MEU_PROJETO/ArmaLaser/Prefabs/ArmaLaser.prefab");
+        var prefab=AssetDatabase.LoadAssetAtPath<GameObject>("Assets/DerbySegundoTempo/Armas/Laser/Prefabs/ArmaLaser.prefab");
         Assert.NotNull(prefab);
         var model=UnityEngine.Object.Instantiate(prefab);model.transform.SetParent(player.transform,false);
         emitter=model.GetComponent(emitterType);muzzle=(Transform)emitterType.GetField("pontaDoCano").GetValue(emitter);
@@ -64,7 +64,7 @@ public class ArmaLaserTests
         var scaler=canvasObject.GetComponent<CanvasScaler>();scaler.uiScaleMode=CanvasScaler.ScaleMode.ScaleWithScreenSize;
         scaler.referenceResolution=new Vector2(1980,1080);
         var image=new GameObject("Mira",typeof(RectTransform),typeof(Image));image.transform.SetParent(canvasObject.transform,false);
-        image.GetComponent<Image>().sprite=AssetDatabase.LoadAssetAtPath<Sprite>("Assets/MEU_PROJETO/Modelos/Imagens/crosshair 1.png");
+        image.GetComponent<Image>().sprite=AssetDatabase.LoadAssetAtPath<Sprite>("Assets/DerbySegundoTempo/Arte/Imagens/Interface/crosshair 1.png");
         var rect=image.GetComponent<RectTransform>();
         // Mesmos offsets, escala e pivo da mira da cena TPS.
         rect.anchorMin=rect.anchorMax=new Vector2(.5f,.5f);rect.pivot=Vector2.zero;
@@ -146,7 +146,7 @@ public class ArmaLaserTests
     [UnityTest]
     public IEnumerator TiroAcertaHitboxDoPrefabRealMesmoComGatilhosGlobaisDesativados()
     {
-        var prefab=AssetDatabase.LoadAssetAtPath<GameObject>("Assets/MEU_PROJETO/Prefabs/Inimigo_perseguidor.prefab");
+        var prefab=AssetDatabase.LoadAssetAtPath<GameObject>("Assets/DerbySegundoTempo/Prefabs/Inimigos/InimigoPerseguidor.prefab");
         Assert.NotNull(prefab);
         var container=new GameObject("InimigoSemIA");SceneManager.MoveGameObjectToScene(container,scene);
         container.SetActive(false);

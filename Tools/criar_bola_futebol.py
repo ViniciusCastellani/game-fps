@@ -7,7 +7,7 @@ import struct
 import uuid
 import numpy as np
 
-ROOT = Path('Assets/MEU_PROJETO/CenarioTPS')
+ROOT = Path('Assets/DerbySegundoTempo/Cenarios/Estadio')
 HEADER = '%YAML 1.1\n%TAG !u! tag:unity3d.com,2011:\n'
 BASE = '  m_ObjectHideFlags: 0\n  m_CorrespondingSourceObject: {fileID: 0}\n  m_PrefabInstance: {fileID: 0}\n  m_PrefabAsset: {fileID: 0}\n'
 RADIUS = .27
@@ -119,7 +119,7 @@ def criar_assets_bola():
     white = material('BolaBranca', (.91, .9, .86))
     vertices, indices, counts = soccer_mesh()
     mesh_path = ROOT / 'Malhas' / 'BolaFutebol.asset'
-    template = Path('Assets/MEU_PROJETO/Packages/JMO Assets/Cartoon FX Remaster/CFXR Assets/Graphics/cfxr star mesh.asset').read_text()
+    template = Path('Assets/Terceiros/JMO Assets/Cartoon FX Remaster/CFXR Assets/Graphics/cfxr star mesh.asset').read_text()
     submeshes = '  m_SubMeshes:\n'
     offset = 0
     for count in counts:
@@ -157,7 +157,7 @@ PhysicsMaterial:
   m_BounceCombine: 0
 ''')
     meta(physics_path, 'NativeFormatImporter', 13400000)
-    script = Path('Assets/MEU_PROJETO/Scripts/BolaFutebol.cs')
+    script = Path('Assets/DerbySegundoTempo/Scripts/Runtime/Cenario/BolaFutebol.cs')
     path = ROOT / 'Prefabs' / 'BolaFutebol.prefab'
     path.write_text(HEADER + f'''--- !u!1 &1000
 GameObject:
