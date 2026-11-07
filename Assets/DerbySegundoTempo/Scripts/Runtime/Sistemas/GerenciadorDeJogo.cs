@@ -172,7 +172,7 @@ public class GerenciadorDeJogo : MonoBehaviour
 
     public void Vitoria()
     {
-        if (!EstaJogando)
+        if (!EstaJogando || SessaoDeJogo.EhInfinitoNaCena(gameObject.scene.name))
         {
             return;
         }
@@ -231,7 +231,8 @@ public class GerenciadorDeJogo : MonoBehaviour
     public void ReiniciarFase()
     {
         PararSomDeFim();
-        gerenciadorDeOrdas.ReiniciarNaOrdaAtual();
+        if (SessaoDeJogo.EhInfinitoNaCena(gameObject.scene.name)) GerenciadorDeOrdas.LimparReinicio();
+        else gerenciadorDeOrdas.ReiniciarNaOrdaAtual();
         Time.timeScale = 1f;
         gerenciadorDeCenas.ReiniciarFase();
     }

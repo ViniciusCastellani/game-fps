@@ -113,7 +113,9 @@ public class ModosDeJogoTests
     {
         yield return IrParaTelaInicial();
         Botao("BotaoIniciar").onClick.Invoke();
+        yield return EsperarCena("SelecaoDeModo");
         Botao("BotaoModoInfinito").onClick.Invoke();
+        yield return EsperarCena("SelecaoDeCenario");
         Botao(cena == Rua ? "CartaoRua" : "CartaoEstadio").onClick.Invoke();
         Botao("BotaoIniciarSobrevivencia").onClick.Invoke();
         yield return EsperarCena(cena);
@@ -123,6 +125,7 @@ public class ModosDeJogoTests
     {
         yield return IrParaTelaInicial();
         Botao("BotaoIniciar").onClick.Invoke();
+        yield return EsperarCena("SelecaoDeModo");
         Botao("BotaoModoNormal").onClick.Invoke();
         yield return EsperarCena(Estadio);
     }
@@ -262,102 +265,59 @@ public class ModosDeJogoTests
     public IEnumerator MenuNavegaEntreTelas()
     {
         yield return IrParaTelaInicial();
-
-        Assert.AreEqual(1, Objeto("Interface_Principal").GetComponentsInChildren<Transform>(true).Count(t => t.name == "PainelEscolhaDeModo"));
-        Assert.AreEqual(1, Objeto("Interface_Principal").GetComponentsInChildren<Transform>(true).Count(t => t.name == "PainelEscolhaDeCenario"));
-        var menu = Encontrar("MenuDeModos");
-        foreach (FieldInfo campo in menu.GetType().GetFields(Flags))
-        {
-            object valor = campo.GetValue(menu);
-            if (typeof(Object).IsAssignableFrom(campo.FieldType)) Assert.IsTrue((Object)valor != null, campo.Name);
-            if (campo.FieldType.IsArray) foreach (object item in (Array)valor) Assert.IsTrue((Object)item != null, campo.Name);
-        }
-
-        var botaoIniciar = Botao("BotaoIniciar");
         Assert.AreEqual("Principal", TelaDoMenu());
-        Assert.IsFalse(Objeto("PainelEscolhaDeModo").gameObject.activeSelf);
-        Assert.IsFalse(Objeto("PainelEscolhaDeCenario").gameObject.activeSelf);
-        Assert.AreEqual(botaoIniciar.gameObject, Selecionado());
-        Assert.IsTrue((bool)Propriedade(botaoIniciar.GetComponent(Tipo("RealceDeSelecao")), "EmFoco"));
-        Assert.AreEqual(1, botaoIniciar.onClick.GetPersistentEventCount());
-        Assert.AreEqual("MenuDeModos", botaoIniciar.onClick.GetPersistentTarget(0).GetType().Name);
-        Assert.AreEqual("AbrirEscolhaDeModo", botaoIniciar.onClick.GetPersistentMethodName(0));
+        Assert.IsFalse(EncontrarTodos("CartaoDeCenario").Any());
+        var iniciar = Botao("BotaoIniciar");
+        Assert.AreEqual(iniciar.gameObject, Selecionado());
+        Assert.AreEqual(1, iniciar.onClick.GetPersistentEventCount());
+        Assert.AreEqual("AbrirEscolhaDeModo", iniciar.onClick.GetPersistentMethodName(0));
         Assert.AreEqual("Sair", Botao("BotaoSair").onClick.GetPersistentMethodName(0));
+        Assert.AreEqual(Botao("BotaoSair"), iniciar.navigation.selectOnDown);
+        Assert.AreEqual(iniciar, Botao("BotaoSair").navigation.selectOnUp);
 
-        botaoIniciar.onClick.Invoke();
+        iniciar.onClick.Invoke();
+        yield return EsperarCena("SelecaoDeModo");
         Assert.AreEqual("Modos", TelaDoMenu());
-        Assert.IsTrue(Objeto("PainelEscolhaDeModo").gameObject.activeSelf);
         Assert.AreEqual(Botao("BotaoModoNormal").gameObject, Selecionado());
-        Assert.AreEqual("ESCOLHA O MODO DE JOGO", TextoDe("PainelEscolhaDeModo/Titulo"));
-        Assert.AreEqual("NORMAL", TextoDe("BotaoModoNormal/Titulo"));
-        Assert.AreEqual("Complete as hordas do estádio e avance para a rua.", TextoDe("BotaoModoNormal/Descricao"));
+        Assert.AreEqual("CLÁSSICO", TextoDe("BotaoModoNormal/Titulo"));
         Assert.AreEqual("INFINITO", TextoDe("BotaoModoInfinito/Titulo"));
-        Assert.AreEqual("Escolha um cenário e sobreviva pelo maior tempo possível.", TextoDe("BotaoModoInfinito/Descricao"));
-        Assert.AreEqual("Voltar", TextoDe("BotaoVoltarModos/Texto"));
-
-        Chamar(menu, "Voltar");
-        Assert.AreEqual("Principal", TelaDoMenu());
-        Assert.IsFalse(Objeto("PainelEscolhaDeModo").gameObject.activeSelf);
-        Assert.AreEqual(botaoIniciar.gameObject, Selecionado());
-        Chamar(menu, "Voltar");
-        Assert.AreEqual("Principal", TelaDoMenu());
-        Assert.AreEqual(botaoIniciar.gameObject, Selecionado());
-
-        botaoIniciar.onClick.Invoke();
-        Botao("BotaoModoInfinito").onClick.Invoke();
-        Assert.AreEqual("Cenarios", TelaDoMenu());
-        Assert.AreEqual("Onde você quer sobreviver?", TextoDe("PainelEscolhaDeCenario/Titulo"));
-        var cartoes = ((Array)Campo(menu, "cartoes")).Cast<Component>().ToArray();
-        Assert.AreEqual(2, cartoes.Length);
-        CollectionAssert.AreEquivalent(new[] { Estadio, Rua }, cartoes.Select(c => (string)Propriedade(c, "NomeDaCena")).ToArray());
-        foreach (var cartao in cartoes) Assert.IsNotNull(((Image)Campo(cartao, "imagem")).sprite);
-        Assert.AreEqual("ESTÁDIO", TextoDe("CartaoEstadio/Nome"));
-        Assert.AreEqual("RUA", TextoDe("CartaoRua/Nome"));
-        var cartaoEstadio = cartoes.Single(c => (string)Propriedade(c, "NomeDaCena") == Estadio);
-        var cartaoRua = cartoes.Single(c => (string)Propriedade(c, "NomeDaCena") == Rua);
-        Assert.IsTrue((bool)Propriedade(cartaoEstadio, "Escolhido"));
-        Assert.IsTrue(((GameObject)Campo(cartaoEstadio, "seloSelecionado")).activeSelf);
-        Assert.IsFalse(((GameObject)Campo(cartaoRua, "seloSelecionado")).activeSelf);
-        Assert.AreEqual(cartaoEstadio.gameObject, Selecionado());
-        Assert.AreEqual("Iniciar sobrevivência", TextoDe("BotaoIniciarSobrevivencia/Texto"));
-        Assert.AreEqual("Voltar", TextoDe("BotaoVoltarCenarios/Texto"));
-
-        Botao("CartaoRua").onClick.Invoke();
-        Assert.AreEqual(Rua, (string)Propriedade(Propriedade(menu, "CartaoEscolhido"), "NomeDaCena"));
-        AssertCor(new Color(1f, 0.776f, 0.161f), ((Image)Campo(cartaoRua, "moldura")).color);
-        AssertCor(new Color(0.231f, 0.286f, 0.376f), ((Image)Campo(cartaoEstadio, "moldura")).color);
-        Assert.IsTrue(((GameObject)Campo(cartaoRua, "seloSelecionado")).activeSelf);
-        Assert.IsFalse(((GameObject)Campo(cartaoEstadio, "seloSelecionado")).activeSelf);
-
-        EventSystem.current.SetSelectedGameObject(null);
-        yield return null;
-        yield return null;
-        Assert.AreEqual(cartaoRua.gameObject, Selecionado());
-
-        Chamar(menu, "Voltar");
-        Assert.AreEqual("Modos", TelaDoMenu());
-        Assert.AreEqual(Botao("BotaoModoInfinito").gameObject, Selecionado());
-
-        ConferirNavegacao();
-    }
-
-    static void ConferirNavegacao()
-    {
-        Assert.AreEqual(Navigation.Mode.Explicit, Botao("BotaoIniciar").navigation.mode);
-        Assert.AreEqual(Botao("BotaoSair"), Botao("BotaoIniciar").navigation.selectOnDown);
-        Assert.AreEqual(Botao("BotaoIniciar"), Botao("BotaoSair").navigation.selectOnUp);
         Assert.AreEqual(Botao("BotaoModoInfinito"), Botao("BotaoModoNormal").navigation.selectOnDown);
         Assert.AreEqual(Botao("BotaoModoNormal"), Botao("BotaoModoInfinito").navigation.selectOnUp);
         Assert.AreEqual(Botao("BotaoVoltarModos"), Botao("BotaoModoInfinito").navigation.selectOnDown);
-        Assert.AreEqual(Botao("BotaoModoInfinito"), Botao("BotaoVoltarModos").navigation.selectOnUp);
+        Botao("BotaoVoltarModos").onClick.Invoke();
+        yield return EsperarCena("TelaInicial");
+        Assert.AreEqual("Principal", TelaDoMenu());
+
+        Botao("BotaoIniciar").onClick.Invoke();
+        yield return EsperarCena("SelecaoDeModo");
+        Botao("BotaoModoInfinito").onClick.Invoke();
+        yield return EsperarCena("SelecaoDeCenario");
+        Assert.AreEqual("Cenarios", TelaDoMenu());
+        Assert.AreEqual("ESTÁDIO", TextoDe("CartaoEstadio/Nome"));
+        Assert.AreEqual("RUA", TextoDe("CartaoRua/Nome"));
+        var menu = Encontrar("MenuDeModos");
+        var cartoes = EncontrarTodos("CartaoDeCenario");
+        Assert.AreEqual(2, cartoes.Length);
+        var estadio = cartoes.Single(c => (string)Propriedade(c, "NomeDaCena") == Estadio);
+        var rua = cartoes.Single(c => (string)Propriedade(c, "NomeDaCena") == Rua);
+        foreach (var cartao in cartoes) Assert.IsNotNull(((Image)Campo(cartao, "imagem")).sprite);
+        Assert.IsTrue((bool)Propriedade(estadio, "Escolhido"));
+        Assert.AreEqual(estadio.gameObject, Selecionado());
         Assert.AreEqual(Botao("CartaoRua"), Botao("CartaoEstadio").navigation.selectOnRight);
         Assert.AreEqual(Botao("CartaoEstadio"), Botao("CartaoRua").navigation.selectOnLeft);
-        Assert.AreEqual(Botao("BotaoVoltarCenarios"), Botao("CartaoEstadio").navigation.selectOnDown);
         Assert.AreEqual(Botao("BotaoIniciarSobrevivencia"), Botao("CartaoRua").navigation.selectOnDown);
-        Assert.AreEqual(Botao("CartaoEstadio"), Botao("BotaoVoltarCenarios").navigation.selectOnUp);
-        Assert.AreEqual(Botao("BotaoIniciarSobrevivencia"), Botao("BotaoVoltarCenarios").navigation.selectOnRight);
-        Assert.AreEqual(Botao("CartaoRua"), Botao("BotaoIniciarSobrevivencia").navigation.selectOnUp);
-        Assert.AreEqual(Botao("BotaoVoltarCenarios"), Botao("BotaoIniciarSobrevivencia").navigation.selectOnLeft);
+        Botao("CartaoRua").onClick.Invoke();
+        Assert.AreEqual(Rua, (string)Propriedade(Propriedade(menu, "CartaoEscolhido"), "NomeDaCena"));
+        AssertCor(new Color(1f, 0.776f, 0.161f), ((Image)Campo(rua, "moldura")).color);
+        Assert.IsTrue(((GameObject)Campo(rua, "seloSelecionado")).activeSelf);
+        Assert.IsFalse(((GameObject)Campo(estadio, "seloSelecionado")).activeSelf);
+        EventSystem.current.SetSelectedGameObject(null);
+        yield return null;
+        yield return null;
+        Assert.AreEqual(rua.gameObject, Selecionado());
+        Chamar(menu, "Voltar");
+        yield return EsperarCena("SelecaoDeModo");
+        Assert.AreEqual("Modos", TelaDoMenu());
     }
 
     [UnityTest]
@@ -398,7 +358,7 @@ public class ModosDeJogoTests
 
             foreach (string campo in new[] { "gerenciadorDeJogo", "gerenciadorDeOrdas", "cronometro", "gerenciadorDeCenas", "gerador",
                 "hudInfinito", "telaDeResultado", "textoResultadoCenario", "textoResultadoPontos", "textoResultadoAbates",
-                "textoResultadoTempo", "textoTempoSobrevivencia", "textoAbates", "botaoTentarNovamente" })
+                "textoResultadoTempo", "textoResultadoHordas", "textoResultadoSaldo", "textoHorda", "textoTempoSobrevivencia", "textoAbates", "botaoTentarNovamente" })
                 Assert.IsTrue((Object)Campo(gerenciador, campo) != null, cena + "." + campo);
             Assert.AreEqual(2, ((Array)Campo(gerenciador, "objetosSomenteModoNormal")).Length);
 
@@ -510,6 +470,8 @@ public class ModosDeJogoTests
         Assert.AreEqual(nomeDoCenario, TextoDe("TelaDeResultadoInfinito/Caixa/LinhaCenario/Valor"));
         Assert.AreEqual(Propriedade(manager, "PontosConquistados").ToString(), TextoDe("TelaDeResultadoInfinito/Caixa/LinhaPontos/Valor"));
         Assert.AreEqual(Propriedade(manager, "InimigosAbatidos").ToString(), TextoDe("TelaDeResultadoInfinito/Caixa/LinhaAbates/Valor"));
+        Assert.AreEqual(Propriedade(manager, "HordasSobrevividas").ToString(), TextoDe("TelaDeResultadoInfinito/Caixa/LinhaHordas/Valor"));
+        Assert.AreEqual(Propriedade(manager, "PontosDisponiveis").ToString(), TextoDe("TelaDeResultadoInfinito/Caixa/LinhaSaldo/Valor"));
         string tempoFinal = TextoDe("TelaDeResultadoInfinito/Caixa/LinhaTempo/Valor");
         Assert.AreEqual(Tipo("GerenciadorModoInfinito").GetMethod("FormatarTempo").Invoke(null, new[] { Propriedade(manager, "TempoDeSobrevivencia") }), tempoFinal);
         StringAssert.IsMatch(@"^\d{2}:\d{2}$", tempoFinal);
@@ -532,6 +494,7 @@ public class ModosDeJogoTests
         Assert.AreEqual("Tutorial", Estado(jogo));
         Assert.AreEqual(0f, (float)Propriedade(manager, "TempoDeSobrevivencia"));
         Assert.AreEqual(0, (int)Propriedade(manager, "InimigosAbatidos"));
+        Assert.AreEqual(0, (int)Propriedade(manager, "HordasSobrevividas"));
         pontos = (Component)Tipo("SistemaDePontos").GetField("instancia").GetValue(null);
         Assert.AreEqual(0, (int)Propriedade(pontos, "PontosTotaisConquistados"));
         Assert.AreEqual(0, (int)Campo(pontos, "pontosAtuais"));
@@ -542,7 +505,7 @@ public class ModosDeJogoTests
         yield return null;
         MatarJogador();
         Botao("BotaoEscolherCenario").onClick.Invoke();
-        yield return EsperarCena("TelaInicial");
+        yield return EsperarCena("SelecaoDeCenario");
         Assert.AreEqual("Cenarios", TelaDoMenu());
         Assert.IsTrue(Objeto("PainelEscolhaDeCenario").gameObject.activeSelf);
         Assert.AreEqual(cena, (string)Propriedade(Propriedade(Encontrar("MenuDeModos"), "CartaoEscolhido"), "NomeDaCena"));
@@ -558,8 +521,7 @@ public class ModosDeJogoTests
         Botao("BotaoMenuInicial").onClick.Invoke();
         yield return EsperarCena("TelaInicial");
         Assert.AreEqual("Principal", TelaDoMenu());
-        Assert.IsFalse(Objeto("PainelEscolhaDeModo").gameObject.activeSelf);
-        Assert.IsFalse(Objeto("PainelEscolhaDeCenario").gameObject.activeSelf);
+        Assert.AreEqual(0, EncontrarTodos("CartaoDeCenario").Length);
         Assert.AreEqual("Normal", Modo());
         Assert.AreEqual(1f, Time.timeScale);
         Assert.AreEqual(Botao("BotaoIniciar").gameObject, Selecionado());
@@ -615,12 +577,75 @@ public class ModosDeJogoTests
         yield return new WaitForSeconds(1f);
         Assert.AreEqual(vivosAoParar, Vidas().Length);
 
+        Definir(gerador, "inimigosPrimeiraHorda", 30);
         Definir(gerador, "intervaloDoMiniBoss", 1f);
         Chamar(gerador, "Iniciar");
         yield return new WaitForSeconds(1.6f);
         Assert.AreEqual(1, MiniBosses());
         yield return new WaitForSeconds(1.5f);
         Assert.AreEqual(1, MiniBosses());
+    }
+
+    [UnityTest]
+    public IEnumerator HordasEstadioContinuamAteAMorte() => ConferirHordas(Estadio);
+
+    [UnityTest]
+    public IEnumerator HordasRuaContinuamAteAMorte() => ConferirHordas(Rua);
+
+    IEnumerator ConferirHordas(string cena)
+    {
+        yield return EntrarNoInfinito(cena);
+        var jogo = Encontrar("GerenciadorDeJogo");
+        var gerador = Encontrar("GeradorDeInimigosInfinito");
+        var manager = Encontrar("GerenciadorModoInfinito");
+        TornarJogadorInvencivel();
+        Definir(gerador, "inimigosPrimeiraHorda", 2);
+        Definir(gerador, "aumentoPorHorda", 1);
+        Definir(gerador, "tempoEntreHordas", 5f);
+        Definir(gerador, "intervaloInicial", 0.25f);
+        Definir(gerador, "intervaloMinimo", 0.25f);
+        Chamar(jogo, "FecharTutorial");
+        yield return null;
+        yield return null;
+        int abates = 0;
+        // Avanca alem do numero de hordas da campanha, sem vitoria ou troca de fase.
+        for (int horda = 1; horda <= 8; horda++)
+        {
+            Assert.AreEqual(horda, Propriedade(gerador, "NumeroDaHordaAtual"));
+            Assert.AreEqual(horda + 1, Propriedade(gerador, "InimigosRestantesNaHorda"));
+            for (int passo = 0; passo < 50 && !(bool)Propriedade(gerador, "EmIntervalo"); passo++)
+            {
+                foreach (var vida in Vidas())
+                {
+                    Chamar(vida, "ReceberDano", 10000);
+                    abates++;
+                }
+                if (!(bool)Propriedade(gerador, "EmIntervalo")) Chamar(gerador, "Avancar", 0.3f, 1f);
+                yield return null;
+            }
+            Assert.IsTrue((bool)Propriedade(gerador, "EmIntervalo"));
+            Assert.AreEqual(horda, Propriedade(manager, "HordasSobrevividas"));
+            Assert.AreEqual(abates, Propriedade(manager, "InimigosAbatidos"));
+            Assert.AreEqual("Jogando", Estado(jogo));
+            Assert.AreEqual(cena, SceneManager.GetActiveScene().name);
+            Chamar(jogo, "Vitoria");
+            Assert.AreEqual("Jogando", Estado(jogo));
+            if (horda == 1)
+            {
+                Chamar(jogo, "Pausar");
+                float intervalo = (float)Propriedade(gerador, "IntervaloRestante");
+                yield return new WaitForSecondsRealtime(0.2f);
+                Assert.AreEqual(intervalo, Propriedade(gerador, "IntervaloRestante"));
+                Chamar(jogo, "Continuar");
+            }
+            Chamar(gerador, "Avancar", 6f, 1f);
+        }
+        Assert.AreEqual(9, Propriedade(gerador, "NumeroDaHordaAtual"));
+        MatarJogador();
+        Assert.AreEqual("GameOver", Estado(jogo));
+        Assert.AreEqual("8", TextoDe("TelaDeResultadoInfinito/Caixa/LinhaHordas/Valor"));
+        Assert.AreEqual(abates.ToString(), TextoDe("TelaDeResultadoInfinito/Caixa/LinhaAbates/Valor"));
+        Assert.IsFalse((bool)Propriedade(gerador, "Ativo"));
     }
 
     [UnityTest]

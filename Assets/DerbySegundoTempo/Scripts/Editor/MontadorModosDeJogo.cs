@@ -8,6 +8,8 @@ using UnityEditor.Events;
 using UnityEditor.SceneManagement;
 using UnityEngine;
 using UnityEngine.Events;
+using UnityEngine.EventSystems;
+using UnityEngine.InputSystem.UI;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using Object = UnityEngine.Object;
@@ -16,6 +18,8 @@ public static class MontadorModosDeJogo
 {
     const string Raiz = "Assets/DerbySegundoTempo";
     const string CenaInicial = Raiz + "/Cenas/Menus/TelaInicial.unity";
+    const string CenaModos = Raiz + "/Cenas/Menus/SelecaoDeModo.unity";
+    const string CenaCenarios = Raiz + "/Cenas/Menus/SelecaoDeCenario.unity";
     const string CenaEstadio = Raiz + "/Cenas/Fases/Estadio_TPS_Backup_Visual.unity";
     const string CenaRua = Raiz + "/Cenas/Fases/Rua_TPS.unity";
     const string CaminhoPigMan = Raiz + "/Prefabs/Inimigos/PigManMiniBoss.prefab";
@@ -28,6 +32,28 @@ public static class MontadorModosDeJogo
     const string Pasta = "Library/ModosDeJogo";
 
     static readonly Color CorBranca = Color.white;
+
+    // Permite montar no editor aberto pelo mesmo mecanismo das outras ferramentas do projeto.
+    [InitializeOnLoadMethod]
+    static void Inicializar()
+    {
+        EditorApplication.update -= ExecutarPedido;
+        EditorApplication.update += ExecutarPedido;
+    }
+
+    static void ExecutarPedido()
+    {
+        if (!File.Exists(Pasta + ".montar") || EditorApplication.isCompiling || EditorApplication.isUpdating
+            || EditorApplication.isPlayingOrWillChangePlaymode) return;
+        File.Delete(Pasta + ".montar");
+        try { MontarTudo(); }
+        catch (Exception erro)
+        {
+            Directory.CreateDirectory(Pasta);
+            File.WriteAllText(Pasta + "/erro.txt", erro.ToString());
+            Debug.LogException(erro);
+        }
+    }
 
     [MenuItem("Derby/Modos de Jogo/Montar menus e modo infinito")]
     public static void MontarTudo()
@@ -64,13 +90,16 @@ public static class MontadorModosDeJogo
             Sprite spriteEstadio = EstiloDerbyUI.ImportarCartao(OrigemEstadio, CartaoEstadio);
             Sprite spriteRua = EstiloDerbyUI.ImportarCartao(OrigemRua, CartaoRua);
 
-            MontarTelaInicial(spriteEstadio, spriteRua);
+            MontarTelaInicial();
+            MontarCenaDeSelecao(MenuDeModos.Tela.Modos, CenaModos, spriteEstadio, spriteRua);
+            MontarCenaDeSelecao(MenuDeModos.Tela.Cenarios, CenaCenarios, spriteEstadio, spriteRua);
             MontarFase(CenaEstadio, "Estádio");
             MontarFase(CenaRua, "Rua");
+            AtualizarCenasDoBuild();
 
             Directory.CreateDirectory(Pasta);
             File.WriteAllText(Pasta + "/status.txt",
-                "cenas montadas: 3\n" + CenaInicial + "\n" + CenaEstadio + "\n" + CenaRua + "\n");
+                "cenas montadas: 5\n" + CenaInicial + "\n" + CenaModos + "\n" + CenaCenarios + "\n" + CenaEstadio + "\n" + CenaRua + "\n");
         }
         finally
         {
@@ -81,7 +110,7 @@ public static class MontadorModosDeJogo
         }
     }
 
-    static void MontarTelaInicial(Sprite spriteEstadio, Sprite spriteRua)
+    static void MontarTelaInicial()
     {
         Scene cena = EditorSceneManager.OpenScene(CenaInicial, OpenSceneMode.Single);
 
@@ -113,31 +142,80 @@ public static class MontadorModosDeJogo
         UnityEventTools.AddPersistentListener(botaoIniciar.onClick, new UnityAction(menu.AbrirEscolhaDeModo));
         EditorUtility.SetDirty(botaoIniciar);
 
-        GameObject painelModos = MontarPainelDeModos(canvas, menu,
-            out Button botaoNormal, out Button botaoInfinito, out Button botaoVoltarModos);
-
-        GameObject painelCenarios = MontarPainelDeCenarios(canvas, menu, spriteEstadio, spriteRua,
-            out CartaoDeCenario cartaoEstadio, out CartaoDeCenario cartaoRua,
-            out Button botaoVoltarCenarios, out Button botaoIniciarSobrevivencia);
-
-        DefinirNavegacaoDosModos(botaoNormal, botaoInfinito, botaoVoltarModos);
-        DefinirNavegacaoDosCenarios(cartaoEstadio.GetComponent<Button>(), cartaoRua.GetComponent<Button>(),
-            botaoVoltarCenarios, botaoIniciarSobrevivencia);
-
         EstiloDerbyUI.LigarCampo(menu, "gerenciadorDeCenas", gerenciadorDeCenas);
         EstiloDerbyUI.LigarCampo(menu, "botaoJogar", botaoIniciar);
         EstiloDerbyUI.LigarCampo(menu, "botaoSair", botaoSair);
-        EstiloDerbyUI.LigarCampo(menu, "painelModos", painelModos);
-        EstiloDerbyUI.LigarCampo(menu, "botaoModoNormal", botaoNormal);
-        EstiloDerbyUI.LigarCampo(menu, "botaoModoInfinito", botaoInfinito);
-        EstiloDerbyUI.LigarCampo(menu, "botaoVoltarModos", botaoVoltarModos);
-        EstiloDerbyUI.LigarCampo(menu, "painelCenarios", painelCenarios);
-        EstiloDerbyUI.LigarLista(menu, "cartoes", new List<Object> { cartaoEstadio, cartaoRua });
-        EstiloDerbyUI.LigarCampo(menu, "botaoIniciarSobrevivencia", botaoIniciarSobrevivencia);
-        EstiloDerbyUI.LigarCampo(menu, "botaoVoltarCenarios", botaoVoltarCenarios);
+        DefinirTelaInicial(menu, MenuDeModos.Tela.Principal);
 
         EditorSceneManager.MarkSceneDirty(cena);
         EditorSceneManager.SaveScene(cena);
+    }
+
+    static void DefinirTelaInicial(MenuDeModos menu, MenuDeModos.Tela tela)
+    {
+        var serializado = new SerializedObject(menu);
+        serializado.FindProperty("telaInicial").enumValueIndex = (int)tela;
+        serializado.ApplyModifiedPropertiesWithoutUndo();
+    }
+
+    static void MontarCenaDeSelecao(MenuDeModos.Tela tela, string caminho, Sprite spriteEstadio, Sprite spriteRua)
+    {
+        Scene cena = EditorSceneManager.NewScene(NewSceneSetup.EmptyScene, NewSceneMode.Single);
+        var sistemas = new GameObject("MenuManager");
+        var gerenciadorDeCenas = sistemas.AddComponent<GerenciadorDeCenas>();
+        var menu = sistemas.AddComponent<MenuDeModos>();
+        EstiloDerbyUI.LigarCampo(menu, "gerenciadorDeCenas", gerenciadorDeCenas);
+        DefinirTelaInicial(menu, tela);
+
+        var canvas = new GameObject("Interface_Principal", typeof(RectTransform), typeof(Canvas), typeof(CanvasScaler), typeof(GraphicRaycaster));
+        canvas.GetComponent<Canvas>().renderMode = RenderMode.ScreenSpaceOverlay;
+        var scaler = canvas.GetComponent<CanvasScaler>();
+        scaler.uiScaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize;
+        scaler.referenceResolution = new Vector2(1920f, 1080f);
+        scaler.screenMatchMode = CanvasScaler.ScreenMatchMode.MatchWidthOrHeight;
+        scaler.matchWidthOrHeight = 0.5f;
+        new GameObject("EventSystem", typeof(EventSystem), typeof(InputSystemUIInputModule));
+        var camera = new GameObject("CameraMenu", typeof(Camera), typeof(AudioListener)).GetComponent<Camera>();
+        camera.clearFlags = CameraClearFlags.SolidColor;
+        camera.backgroundColor = EstiloDerbyUI.CorPainel;
+
+        if (tela == MenuDeModos.Tela.Modos)
+        {
+            GameObject painel = MontarPainelDeModos(canvas.transform, menu,
+                out Button normal, out Button infinito, out Button voltar);
+            painel.SetActive(true);
+            DefinirNavegacaoDosModos(normal, infinito, voltar);
+            EstiloDerbyUI.LigarCampo(menu, "painelModos", painel);
+            EstiloDerbyUI.LigarCampo(menu, "botaoModoNormal", normal);
+            EstiloDerbyUI.LigarCampo(menu, "botaoModoInfinito", infinito);
+            EstiloDerbyUI.LigarCampo(menu, "botaoVoltarModos", voltar);
+        }
+        else
+        {
+            GameObject painel = MontarPainelDeCenarios(canvas.transform, menu, spriteEstadio, spriteRua,
+                out CartaoDeCenario estadio, out CartaoDeCenario rua, out Button voltar, out Button iniciar);
+            painel.SetActive(true);
+            DefinirNavegacaoDosCenarios(estadio.GetComponent<Button>(), rua.GetComponent<Button>(), voltar, iniciar);
+            EstiloDerbyUI.LigarCampo(menu, "painelCenarios", painel);
+            EstiloDerbyUI.LigarLista(menu, "cartoes", new List<Object> { estadio, rua });
+            EstiloDerbyUI.LigarCampo(menu, "botaoIniciarSobrevivencia", iniciar);
+            EstiloDerbyUI.LigarCampo(menu, "botaoVoltarCenarios", voltar);
+        }
+
+        EditorSceneManager.SaveScene(cena, caminho);
+    }
+
+    static void AtualizarCenasDoBuild()
+    {
+        var cenas = EditorBuildSettings.scenes.ToList();
+        foreach (string caminho in new[] { CenaInicial, CenaModos, CenaCenarios, CenaEstadio, CenaRua })
+        {
+            int indice = cenas.FindIndex(c => c.path == caminho);
+            if (indice >= 0) cenas[indice].enabled = true;
+            else cenas.Add(new EditorBuildSettingsScene(caminho, true));
+        }
+        EditorBuildSettings.scenes = cenas.ToArray();
+        AssetDatabase.SaveAssets();
     }
 
     static void PrepararBotaoDoMenuPrincipal(Button botao)
@@ -174,10 +252,10 @@ public static class MontadorModosDeJogo
             "Mouse ou setas para navegar, ENTER confirma, ESC volta.", 24, EstiloDerbyUI.CorTextoSuave,
             new Vector2(0f, 232f), new Vector2(1000f, 40f), FontStyles.Normal);
 
-        botaoNormal = CriarBotaoDeOpcao(painel.transform, "BotaoModoNormal", "NORMAL",
+        botaoNormal = CriarBotaoDeOpcao(painel.transform, "BotaoModoNormal", "CLÁSSICO",
             "Complete as hordas do estádio e avance para a rua.", new Vector2(0f, 110f), menu.IniciarModoNormal);
         botaoInfinito = CriarBotaoDeOpcao(painel.transform, "BotaoModoInfinito", "INFINITO",
-            "Escolha um cenário e sobreviva pelo maior tempo possível.", new Vector2(0f, -80f), menu.AbrirEscolhaDeCenario);
+            "Sobreviva a hordas sem limite no estádio ou na rua.", new Vector2(0f, -80f), menu.AbrirEscolhaDeCenario);
 
         botaoVoltar = EstiloDerbyUI.CriarBotao(painel.transform, "BotaoVoltarModos", "Voltar",
             new Vector2(0f, -270f), new Vector2(360f, 80f),
@@ -385,10 +463,10 @@ public static class MontadorModosDeJogo
         EstiloDerbyUI.LigarCampo(gerador, "origemDosPontos", gerenciadorDeOrdas);
         EstiloDerbyUI.LigarCampo(gerador, "jogador", jogadorVida.transform);
 
-        GameObject hud = MontarHud(raizDoHud, out TMP_Text textoTempo, out TMP_Text textoAbates);
+        GameObject hud = MontarHud(raizDoHud, out TMP_Text textoTempo, out TMP_Text textoAbates, out TMP_Text textoHorda);
         GameObject telaDeResultado = MontarTelaDeResultado(canvasTelas, infinito, spriteDerrota, nomeDoCenario,
             out TMP_Text resultadoCenario, out TMP_Text resultadoPontos, out TMP_Text resultadoAbates,
-            out TMP_Text resultadoTempo, out Button botaoTentarNovamente);
+            out TMP_Text resultadoTempo, out TMP_Text resultadoHordas, out TMP_Text resultadoSaldo, out Button botaoTentarNovamente);
 
         SerializedObject infinitoSerializado = new SerializedObject(infinito);
         SerializedProperty propriedadeNome = infinitoSerializado.FindProperty("nomeDoCenario");
@@ -404,6 +482,7 @@ public static class MontadorModosDeJogo
         EstiloDerbyUI.LigarCampo(infinito, "hudInfinito", hud);
         EstiloDerbyUI.LigarCampo(infinito, "textoTempoSobrevivencia", textoTempo);
         EstiloDerbyUI.LigarCampo(infinito, "textoAbates", textoAbates);
+        EstiloDerbyUI.LigarCampo(infinito, "textoHorda", textoHorda);
 
         var somenteNormal = new List<Object>();
         if (gerenciadorDeOrdas.textoOrda != null) somenteNormal.Add(gerenciadorDeOrdas.textoOrda.gameObject);
@@ -416,6 +495,8 @@ public static class MontadorModosDeJogo
         EstiloDerbyUI.LigarCampo(infinito, "textoResultadoPontos", resultadoPontos);
         EstiloDerbyUI.LigarCampo(infinito, "textoResultadoAbates", resultadoAbates);
         EstiloDerbyUI.LigarCampo(infinito, "textoResultadoTempo", resultadoTempo);
+        EstiloDerbyUI.LigarCampo(infinito, "textoResultadoHordas", resultadoHordas);
+        EstiloDerbyUI.LigarCampo(infinito, "textoResultadoSaldo", resultadoSaldo);
         EstiloDerbyUI.LigarCampo(infinito, "botaoTentarNovamente", botaoTentarNovamente);
 
         GameObject telaDeTutorial = LerCampo(gerenciadorDeJogo, "telaDeTutorial") as GameObject;
@@ -449,7 +530,7 @@ public static class MontadorModosDeJogo
         return prefabs;
     }
 
-    static GameObject MontarHud(Transform raizDoHud, out TMP_Text textoTempo, out TMP_Text textoAbates)
+    static GameObject MontarHud(Transform raizDoHud, out TMP_Text textoTempo, out TMP_Text textoAbates, out TMP_Text textoHorda)
     {
         GameObject hud = EstiloDerbyUI.CriarObjetoUI("HUDInfinito", raizDoHud);
         RectTransform rect = hud.GetComponent<RectTransform>();
@@ -457,7 +538,7 @@ public static class MontadorModosDeJogo
         rect.anchorMax = new Vector2(0.5f, 1f);
         rect.pivot = new Vector2(0.5f, 1f);
         rect.anchoredPosition = new Vector2(0f, -20f);
-        rect.sizeDelta = new Vector2(560f, 130f);
+        rect.sizeDelta = new Vector2(740f, 170f);
 
         Image fundo = hud.AddComponent<Image>();
         Color corDoFundo = EstiloDerbyUI.CorPainel;
@@ -473,13 +554,17 @@ public static class MontadorModosDeJogo
             CorBranca, new Vector2(0f, -95f), new Vector2(540f, 44f), FontStyles.Bold);
         AncorarNoTopo(textoAbates.rectTransform);
 
+        textoHorda = EstiloDerbyUI.CriarTexto(hud.transform, "TextoHorda", "HORDA 1", 28,
+            CorBranca, new Vector2(0f, -140f), new Vector2(720f, 42f), FontStyles.Bold);
+        AncorarNoTopo(textoHorda.rectTransform);
+
         hud.SetActive(false);
         return hud;
     }
 
     static GameObject MontarTelaDeResultado(Transform canvasTelas, GerenciadorModoInfinito infinito, Sprite personagem,
         string nomeDoCenario, out TMP_Text valorCenario, out TMP_Text valorPontos, out TMP_Text valorAbates,
-        out TMP_Text valorTempo, out Button botaoTentarNovamente)
+        out TMP_Text valorTempo, out TMP_Text valorHordas, out TMP_Text valorSaldo, out Button botaoTentarNovamente)
     {
         GameObject tela = EstiloDerbyUI.CriarTela(canvasTelas, "TelaDeResultadoInfinito", EstiloDerbyUI.CorFundoDerrota, false);
 
@@ -489,28 +574,30 @@ public static class MontadorModosDeJogo
             new Vector2(altura * proporcao, altura));
 
         GameObject caixa = EstiloDerbyUI.CriarPainel(tela.transform, "Caixa", new Vector2(-440f, 0f),
-            new Vector2(880f, 760f), EstiloDerbyUI.CorPainelDerrota, EstiloDerbyUI.CorVermelho);
+            new Vector2(880f, 930f), EstiloDerbyUI.CorPainelDerrota, EstiloDerbyUI.CorVermelho);
 
         EstiloDerbyUI.CriarTexto(caixa.transform, "Titulo", "FIM DA SOBREVIVÊNCIA", 64, EstiloDerbyUI.CorVermelho,
-            new Vector2(0f, 320f), new Vector2(820f, 90f), FontStyles.Bold);
+            new Vector2(0f, 400f), new Vector2(820f, 90f), FontStyles.Bold);
         EstiloDerbyUI.CriarTexto(caixa.transform, "Subtitulo", "SUA VIDA CHEGOU A ZERO!", 30, EstiloDerbyUI.CorTextoClaro,
-            new Vector2(0f, 250f), new Vector2(820f, 44f), FontStyles.Normal);
+            new Vector2(0f, 330f), new Vector2(820f, 44f), FontStyles.Normal);
 
-        valorCenario = CriarLinhaDeResultado(caixa.transform, "LinhaCenario", "CENÁRIO", nomeDoCenario, 170f);
-        valorPontos = CriarLinhaDeResultado(caixa.transform, "LinhaPontos", "PONTOS CONQUISTADOS", "0", 105f);
-        valorAbates = CriarLinhaDeResultado(caixa.transform, "LinhaAbates", "INIMIGOS ABATIDOS", "0", 40f);
-        valorTempo = CriarLinhaDeResultado(caixa.transform, "LinhaTempo", "TEMPO DE SOBREVIVÊNCIA", "00:00", -25f);
+        valorCenario = CriarLinhaDeResultado(caixa.transform, "LinhaCenario", "CENÁRIO", nomeDoCenario, 255f);
+        valorPontos = CriarLinhaDeResultado(caixa.transform, "LinhaPontos", "PONTOS TOTAIS COLETADOS", "0", 195f);
+        valorSaldo = CriarLinhaDeResultado(caixa.transform, "LinhaSaldo", "SALDO NÃO GASTO", "0", 135f);
+        valorAbates = CriarLinhaDeResultado(caixa.transform, "LinhaAbates", "INIMIGOS ABATIDOS", "0", 75f);
+        valorHordas = CriarLinhaDeResultado(caixa.transform, "LinhaHordas", "HORDAS SOBREVIVIDAS", "0", 15f);
+        valorTempo = CriarLinhaDeResultado(caixa.transform, "LinhaTempo", "TEMPO DE SOBREVIVÊNCIA", "00:00", -45f);
 
         botaoTentarNovamente = EstiloDerbyUI.CriarBotao(caixa.transform, "BotaoTentarNovamente", "Tentar novamente",
-            new Vector2(0f, -120f), new Vector2(460f, 76f),
+            new Vector2(0f, -160f), new Vector2(460f, 76f),
             EstiloDerbyUI.CorBotao, EstiloDerbyUI.CorBotaoClaro, EstiloDerbyUI.CorBotaoEscuro,
             EstiloDerbyUI.CorTextoBotao, infinito.TentarNovamente);
         Button botaoEscolherCenario = EstiloDerbyUI.CriarBotao(caixa.transform, "BotaoEscolherCenario", "Escolher cenário",
-            new Vector2(0f, -210f), new Vector2(460f, 76f),
+            new Vector2(0f, -250f), new Vector2(460f, 76f),
             EstiloDerbyUI.CorBotao2, EstiloDerbyUI.CorBotao2Claro, EstiloDerbyUI.CorBotao2Escuro,
             EstiloDerbyUI.CorTextoClaro, infinito.EscolherCenario);
         Button botaoMenuInicial = EstiloDerbyUI.CriarBotao(caixa.transform, "BotaoMenuInicial", "Menu inicial",
-            new Vector2(0f, -300f), new Vector2(460f, 76f),
+            new Vector2(0f, -340f), new Vector2(460f, 76f),
             EstiloDerbyUI.CorBotao2, EstiloDerbyUI.CorBotao2Claro, EstiloDerbyUI.CorBotao2Escuro,
             EstiloDerbyUI.CorTextoClaro, infinito.VoltarAoMenuInicial);
 

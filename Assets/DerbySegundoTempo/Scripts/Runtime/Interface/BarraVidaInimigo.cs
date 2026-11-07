@@ -9,7 +9,7 @@ public class BarraVidaInimigo : MonoBehaviour
 
     private int vidaMaxima;
 
-    void Start()
+    void Awake()
     {
         inimigoVida = GetComponentInParent<InimigoVida>();
 

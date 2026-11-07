@@ -5,7 +5,7 @@ using TMPro;
 
 public class GerenciadorModoInfinito : MonoBehaviour
 {
-    public const string TextoObjetivoInfinito = "<b><color=#FFC629>OBJETIVO</color></b>   Sobreviva o máximo que puder: os inimigos não param de chegar.\nCada abate rende pontos para gastar nas estações. O placar final soma todos os pontos conquistados.";
+    public const string TextoObjetivoInfinito = "<b><color=#FFC629>OBJETIVO</color></b>   Elimine todos os inimigos de cada horda para avançar. As hordas não têm limite; a partida termina quando sua vida chega a zero.\nGaste pontos nas estações. O resultado soma todos os pontos conquistados, mesmo os gastos, os abates e as hordas concluídas.";
 
     [SerializeField] private string nomeDoCenario = "Estádio";
 
@@ -20,6 +20,7 @@ public class GerenciadorModoInfinito : MonoBehaviour
     [SerializeField] private GameObject hudInfinito;
     [SerializeField] private TMP_Text textoTempoSobrevivencia;
     [SerializeField] private TMP_Text textoAbates;
+    [SerializeField] private TMP_Text textoHorda;
     [SerializeField] private GameObject[] objetosSomenteModoNormal;
 
     [Header("Resultado")]
@@ -28,6 +29,8 @@ public class GerenciadorModoInfinito : MonoBehaviour
     [SerializeField] private TMP_Text textoResultadoPontos;
     [SerializeField] private TMP_Text textoResultadoAbates;
     [SerializeField] private TMP_Text textoResultadoTempo;
+    [SerializeField] private TMP_Text textoResultadoHordas;
+    [SerializeField] private TMP_Text textoResultadoSaldo;
     [SerializeField] private Button botaoTentarNovamente;
 
     [Header("Tutorial")]
@@ -38,6 +41,8 @@ public class GerenciadorModoInfinito : MonoBehaviour
     public bool Terminou { get; private set; }
     public float TempoDeSobrevivencia { get; private set; }
     public int InimigosAbatidos { get; private set; }
+    public int HordasSobrevividas => gerador != null ? gerador.HordasSobrevividas : 0;
+    public int PontosDisponiveis => SistemaDePontos.instancia != null ? SistemaDePontos.instancia.pontosAtuais : 0;
 
     public int PontosConquistados
     {
@@ -51,6 +56,7 @@ public class GerenciadorModoInfinito : MonoBehaviour
 
     private int ultimoSegundoExibido = -1;
     private int ultimoAbateExibido = -1;
+    private string ultimaHordaExibida;
 
     public static string FormatarTempo(float segundos)
     {
@@ -178,6 +184,8 @@ public class GerenciadorModoInfinito : MonoBehaviour
         textoResultadoPontos.text = PontosConquistados.ToString();
         textoResultadoAbates.text = InimigosAbatidos.ToString();
         textoResultadoTempo.text = FormatarTempo(TempoDeSobrevivencia);
+        textoResultadoHordas.text = HordasSobrevividas.ToString();
+        textoResultadoSaldo.text = PontosDisponiveis.ToString();
 
         if (EventSystem.current != null)
         {
@@ -204,16 +212,21 @@ public class GerenciadorModoInfinito : MonoBehaviour
     void AtualizarHUD(bool forcar)
     {
         int segundo = Mathf.FloorToInt(TempoDeSobrevivencia);
-        if (!forcar && segundo == ultimoSegundoExibido && InimigosAbatidos == ultimoAbateExibido)
+        string horda = gerador.EmIntervalo
+            ? "HORDA CONCLUÍDA! PRÓXIMA EM " + Mathf.CeilToInt(gerador.IntervaloRestante) + "s"
+            : "HORDA " + Mathf.Max(1, gerador.NumeroDaHordaAtual) + "  |  RESTANTES: " + gerador.InimigosRestantesNaHorda;
+        if (!forcar && segundo == ultimoSegundoExibido && InimigosAbatidos == ultimoAbateExibido && horda == ultimaHordaExibida)
         {
             return;
         }
 
         ultimoSegundoExibido = segundo;
         ultimoAbateExibido = InimigosAbatidos;
+        ultimaHordaExibida = horda;
 
         textoTempoSobrevivencia.text = "TEMPO: " + FormatarTempo(TempoDeSobrevivencia);
         textoAbates.text = "ABATES: " + InimigosAbatidos;
+        textoHorda.text = horda;
     }
 
     string PrimeiroCampoAusente()
@@ -229,8 +242,11 @@ public class GerenciadorModoInfinito : MonoBehaviour
         if (textoResultadoPontos == null) return "textoResultadoPontos";
         if (textoResultadoAbates == null) return "textoResultadoAbates";
         if (textoResultadoTempo == null) return "textoResultadoTempo";
+        if (textoResultadoHordas == null) return "textoResultadoHordas";
+        if (textoResultadoSaldo == null) return "textoResultadoSaldo";
         if (textoTempoSobrevivencia == null) return "textoTempoSobrevivencia";
         if (textoAbates == null) return "textoAbates";
+        if (textoHorda == null) return "textoHorda";
         if (botaoTentarNovamente == null) return "botaoTentarNovamente";
         return null;
     }

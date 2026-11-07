@@ -17,6 +17,12 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/DerbySegundoTempo/Cenas/Menus/TelaPausa.unity
     guid: 7b6d73adefaa463dd88868ed35a1a2de
+  - enabled: 1
+    path: Assets/DerbySegundoTempo/Cenas/Menus/SelecaoDeModo.unity
+    guid: 25a4a592e9e5f7c45a298876f4271c6d
+  - enabled: 1
+    path: Assets/DerbySegundoTempo/Cenas/Menus/SelecaoDeCenario.unity
+    guid: 477c7d7469645fb4f9e958fff090667b
   m_configObjects:
     com.unity.dt.app-ui: {fileID: 11400000, guid: 1b1c20d82303e4b5781c3ef50ac1449f, type: 2}
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 052faaac586de48259a63d0c4782560b, type: 3}

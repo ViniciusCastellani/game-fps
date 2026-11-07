@@ -4,7 +4,7 @@ Abra `Cenas/Menus/TelaInicial.unity` para jogar a campanha.
 
 ## Cenas e progressao
 
-1. `TelaInicial`: menu principal.
+1. `TelaInicial`: menu principal; **INICIAR** abre `SelecaoDeModo` e **INFINITO** abre `SelecaoDeCenario`.
 2. `Estadio_TPS_Backup_Visual`: primeira fase; o nome foi mantido por ser a cena principal escolhida.
 3. `Rua_TPS`: segunda fase; base jogavel com rua, edificios, coberturas, estacoes e NavMesh propria.
 4. `TelaPausa`: cena de pausa preservada. Cada fase tambem mantem o painel de pausa existente, acionado com Esc.
@@ -15,19 +15,22 @@ As cenas anteriores `Estadio_Futebol` e `Estadio_TPS` ficam em `Cenas/Arquivo`, 
 
 ## Modos de jogo
 
-Fluxo: `TelaInicial` > **INICIAR** > **NORMAL** (campanha estadio e rua, como antes) ou **INFINITO** > escolha do cenario (**Estadio** ou **Rua**) > **Iniciar sobrevivencia**. Esc volta uma tela nos menus.
+Fluxo com cenas separadas: `TelaInicial` > **INICIAR** > `SelecaoDeModo` > **CLÁSSICO** (campanha estadio e rua) ou **INFINITO** > `SelecaoDeCenario` > miniatura de **Estadio** ou **Rua** > **Iniciar sobrevivencia**. Esc ou **Voltar** retorna a cena anterior. As duas cenas de selecao fazem parte do build.
 
 Regras do modo Infinito:
 
 - O tutorial abre em toda partida; o tempo e os inimigos so comecam ao fechar o tutorial.
-- Os inimigos nascem sem parar, com limite de vivos ao mesmo tempo e um PigMan periodico.
-- O HUD mostra o tempo de sobrevivencia e os abates; o cronometro e o contador de ordas do modo Normal ficam ocultos.
-- Os pontos continuam sendo gastos nas estacoes. O placar final soma todos os pontos conquistados, mesmo os gastos.
-- Ao morrer, a tela de resultado mostra cenario, pontos, abates e tempo, com os botoes **Tentar novamente**, **Escolher cenario** e **Menu inicial**.
+- A primeira horda tem 6 inimigos, com 3 surgindo no inicio. Cada horda seguinte acrescenta 2 inimigos. No maximo 12 ficam vivos ao mesmo tempo.
+- Elimine todos os inimigos da horda para conclui-la. A proxima comeca automaticamente apos 5 segundos, sem limite de hordas e sem trocar de cenario.
+- Um PigMan pode ocupar uma vaga da horda a cada 90 segundos, com no maximo um vivo. Ele tambem precisa ser eliminado para concluir a horda.
+- O HUD mostra tempo de sobrevivencia, abates, horda atual e inimigos restantes (incluindo os que ainda vao surgir). Pausa e tutorial interrompem o tempo, os spawns e o intervalo entre hordas.
+- A partida termina quando a vida chega a zero. Nao ha derrota por tempo nem tela de vitoria no infinito.
+- O resultado mostra cenario, **pontos totais coletados** (incluindo os gastos nas estacoes), **saldo nao gasto**, **inimigos abatidos**, **hordas sobrevividas** e tempo. A horda em andamento nao entra no total de hordas sobrevividas.
+- **Tentar novamente** reinicia a sobrevivencia na mesma fase e zera os contadores. **Escolher cenario** abre `SelecaoDeCenario`, lembrando a ultima fase jogada. **Menu inicial** retorna a `TelaInicial`.
 
-Ajustes: em cada fase, `00_Sistemas/ModoInfinito` > `GeradorDeInimigosInfinito`. Padroes: intervalo inicial 3 s, minimo 1,2 s, reducao de 0,6 s por minuto, 3 inimigos no inicio, no maximo 12 vivos, um PigMan a cada 90 s (no maximo 1 vivo) e pontos de spawn a pelo menos 8 m do jogador.
+Ajustes: em cada fase, `00_Sistemas/ModoInfinito` > `GeradorDeInimigosInfinito`. Alem da quantidade de inimigos e intervalo entre hordas, o intervalo de spawn comeca em 3 s, chega ao minimo de 1,2 s e diminui 0,6 s por minuto. Os pontos de spawn priorizam distancia de pelo menos 8 m do jogador.
 
-O modo Normal nao muda e e o padrao ao abrir uma fase direto no editor: o modo Infinito so vale quando escolhido pelo menu.
+O modo Classico preserva a campanha e e o padrao ao abrir uma fase direto no editor: o modo Infinito so vale quando escolhido pelo menu.
 
 ## Pastas
 
@@ -67,7 +70,7 @@ Objetos que pertencem a prefabs continuam vinculados a eles. Os inimigos instanc
 
 - `Derby > Projeto > Validar campanha e organizacao`: testa menu, hordas, troca de fase, pausa, vitoria final e reinicio.
 - `Derby > Projeto > Organizar projeto e implementar Rua TPS`: migracao inicial; com a estrutura nova existente, apenas confirma a lista de build.
-- `Derby > Modos de Jogo > Montar menus e modo infinito`: monta os menus em `TelaInicial` e o modo Infinito nas duas fases (pode ser repetido sem duplicar objetos).
+- `Derby > Modos de Jogo > Montar menus e modo infinito`: monta `TelaInicial`, `SelecaoDeModo`, `SelecaoDeCenario` e o modo Infinito nas duas fases (pode ser repetido sem duplicar objetos).
 - `Derby > Modos de Jogo > Validar modos de jogo`: confere as cenas e roda os testes de Play Mode dos modos de jogo e da campanha. Relatorios em `Library/ModosDeJogo`.
 - `Tools/test_cenario_tps.py`: verificacoes de geometria e referencias do estadio.
 

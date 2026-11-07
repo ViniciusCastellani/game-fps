@@ -87,7 +87,8 @@ public class CampanhaTests
         CollectionAssert.AreEqual(new[]
         {
             Cenas + "Menus/TelaInicial.unity", Cenas + "Fases/Estadio_TPS_Backup_Visual.unity",
-            Cenas + "Fases/Rua_TPS.unity", Cenas + "Menus/TelaPausa.unity"
+            Cenas + "Fases/Rua_TPS.unity", Cenas + "Menus/TelaPausa.unity",
+            Cenas + "Menus/SelecaoDeModo.unity", Cenas + "Menus/SelecaoDeCenario.unity"
         }, EditorBuildSettings.scenes.Where(x => x.enabled).Select(x => x.path).ToArray());
         yield return EditorSceneManager.LoadSceneAsyncInPlayMode(Cenas + "Menus/TelaInicial.unity", new LoadSceneParameters(LoadSceneMode.Single));
         yield return null;

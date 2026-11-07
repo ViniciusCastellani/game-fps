@@ -12,6 +12,7 @@ public class MenuDeModos : MonoBehaviour
     }
 
     [SerializeField] private GerenciadorDeCenas gerenciadorDeCenas;
+    [SerializeField] private Tela telaInicial;
 
     [Header("Principal")]
     [SerializeField] private Button botaoJogar;
@@ -25,7 +26,7 @@ public class MenuDeModos : MonoBehaviour
 
     [Header("Cenários")]
     [SerializeField] private GameObject painelCenarios;
-    [SerializeField] private CartaoDeCenario[] cartoes;
+    [SerializeField] private CartaoDeCenario[] cartoes = new CartaoDeCenario[0];
     [SerializeField] private Button botaoIniciarSobrevivencia;
     [SerializeField] private Button botaoVoltarCenarios;
 
@@ -34,6 +35,10 @@ public class MenuDeModos : MonoBehaviour
 
     void Start()
     {
+        Time.timeScale = 1f;
+        Cursor.lockState = CursorLockMode.None;
+        Cursor.visible = true;
+        TelaAtual = telaInicial;
         CartaoDeCenario inicial = null;
 
         foreach (CartaoDeCenario cartao in cartoes)
@@ -52,14 +57,7 @@ public class MenuDeModos : MonoBehaviour
 
         EscolherCartao(inicial);
 
-        if (SessaoDeJogo.ConsumirPedidoDeEscolhaDeCenario())
-        {
-            Mostrar(Tela.Cenarios, CartaoEscolhido != null ? CartaoEscolhido.gameObject : null);
-        }
-        else
-        {
-            Mostrar(Tela.Principal, botaoJogar.gameObject);
-        }
+        Mostrar(telaInicial, FocoPadraoDaTelaAtual());
     }
 
     void Update()
@@ -84,23 +82,23 @@ public class MenuDeModos : MonoBehaviour
 
     public void AbrirEscolhaDeModo()
     {
-        Mostrar(Tela.Modos, botaoModoNormal.gameObject);
+        gerenciadorDeCenas.AbrirSelecaoDeModo();
     }
 
     public void AbrirEscolhaDeCenario()
     {
-        Mostrar(Tela.Cenarios, CartaoEscolhido != null ? CartaoEscolhido.gameObject : null);
+        gerenciadorDeCenas.VoltarParaEscolhaDeCenario();
     }
 
     public void Voltar()
     {
         if (TelaAtual == Tela.Cenarios)
         {
-            Mostrar(Tela.Modos, botaoModoInfinito.gameObject);
+            gerenciadorDeCenas.AbrirSelecaoDeModo();
         }
         else if (TelaAtual == Tela.Modos)
         {
-            Mostrar(Tela.Principal, botaoJogar.gameObject);
+            gerenciadorDeCenas.VoltarParaTelaInicial();
         }
     }
 
@@ -140,8 +138,8 @@ public class MenuDeModos : MonoBehaviour
     void Mostrar(Tela tela, GameObject foco)
     {
         TelaAtual = tela;
-        painelModos.SetActive(tela == Tela.Modos);
-        painelCenarios.SetActive(tela == Tela.Cenarios);
+        if (painelModos != null) painelModos.SetActive(tela == Tela.Modos);
+        if (painelCenarios != null) painelCenarios.SetActive(tela == Tela.Cenarios);
 
         if (EventSystem.current != null)
         {

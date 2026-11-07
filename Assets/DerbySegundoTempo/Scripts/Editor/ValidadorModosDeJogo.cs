@@ -14,6 +14,8 @@ public static class ValidadorModosDeJogo
 {
     const string Raiz = "Assets/DerbySegundoTempo";
     const string CenaInicial = Raiz + "/Cenas/Menus/TelaInicial.unity";
+    const string CenaModos = Raiz + "/Cenas/Menus/SelecaoDeModo.unity";
+    const string CenaCenarios = Raiz + "/Cenas/Menus/SelecaoDeCenario.unity";
     const string CenaEstadio = Raiz + "/Cenas/Fases/Estadio_TPS_Backup_Visual.unity";
     const string CenaRua = Raiz + "/Cenas/Fases/Rua_TPS.unity";
     const string CaminhoPigMan = Raiz + "/Prefabs/Inimigos/PigManMiniBoss.prefab";
@@ -27,6 +29,22 @@ public static class ValidadorModosDeJogo
     {
         runner = ScriptableObject.CreateInstance<TestRunnerApi>();
         runner.RegisterCallbacks(new Resultados());
+        EditorApplication.update -= ExecutarPedido;
+        EditorApplication.update += ExecutarPedido;
+    }
+
+    static void ExecutarPedido()
+    {
+        if (!File.Exists(Pasta + ".validar") || EditorApplication.isCompiling || EditorApplication.isUpdating
+            || EditorApplication.isPlayingOrWillChangePlaymode) return;
+        File.Delete(Pasta + ".validar");
+        try { Validar(); }
+        catch (Exception erro)
+        {
+            Directory.CreateDirectory(Pasta);
+            File.WriteAllText(Pasta + "/validacao-erro.txt", erro.ToString());
+            Debug.LogException(erro);
+        }
     }
 
     [MenuItem("Derby/Modos de Jogo/Validar modos de jogo")]
@@ -39,6 +57,8 @@ public static class ValidadorModosDeJogo
 
         var linhas = new List<string>();
         ValidarCena(CenaInicial, linhas, ValidarTelaInicial);
+        ValidarCena(CenaModos, linhas, ValidarSelecao);
+        ValidarCena(CenaCenarios, linhas, ValidarSelecao);
         ValidarCena(CenaEstadio, linhas, ValidarFase);
         ValidarCena(CenaRua, linhas, ValidarFase);
         File.WriteAllText(Pasta + "/validacao.txt", string.Join("\n", linhas) + "\n");
@@ -94,14 +114,13 @@ public static class ValidadorModosDeJogo
         string nome = cena.name;
         Transform[] transforms = TodosOsTransforms(cena);
 
-        Verificar(linhas, nome, "um PainelEscolhaDeModo", transforms.Count(t => t.name == "PainelEscolhaDeModo") == 1);
-        Verificar(linhas, nome, "um PainelEscolhaDeCenario", transforms.Count(t => t.name == "PainelEscolhaDeCenario") == 1);
+        Verificar(linhas, nome, "selecao em cenas separadas", !transforms.Any(t => t.name == "PainelEscolhaDeModo" || t.name == "PainelEscolhaDeCenario"));
 
         MenuDeModos[] menus = TodosOsComponentes<MenuDeModos>(cena);
         Verificar(linhas, nome, "um MenuDeModos", menus.Length == 1);
         if (menus.Length == 1)
         {
-            Verificar(linhas, nome, "MenuDeModos com todas as referencias", SemReferenciaNula(menus[0], null));
+            VerificarCampos(linhas, nome, menus[0], "gerenciadorDeCenas", "botaoJogar", "botaoSair");
         }
 
         Button botaoIniciar = BotaoPorNome(transforms, "BotaoIniciar");
@@ -121,6 +140,33 @@ public static class ValidadorModosDeJogo
             }
         }
         Verificar(linhas, nome, "BotaoSair ainda chama Sair", sairLigado);
+    }
+
+    static void VerificarCampos(List<string> linhas, string cena, Object alvo, params string[] campos)
+    {
+        var serializado = new SerializedObject(alvo);
+        foreach (string campo in campos)
+            Verificar(linhas, cena, campo + " ligado", serializado.FindProperty(campo)?.objectReferenceValue != null);
+    }
+
+    static void ValidarSelecao(Scene cena, string caminho, List<string> linhas)
+    {
+        var menus = TodosOsComponentes<MenuDeModos>(cena);
+        Verificar(linhas, cena.name, "um MenuDeModos", menus.Length == 1);
+        Verificar(linhas, cena.name, "cena habilitada no build", EditorBuildSettings.scenes.Any(c => c.enabled && c.path == caminho));
+        if (menus.Length != 1) return;
+        VerificarCampos(linhas, cena.name, menus[0], "gerenciadorDeCenas");
+        if (cena.name == GerenciadorDeCenas.CenaDeModos)
+        {
+            VerificarCampos(linhas, cena.name, menus[0], "painelModos", "botaoModoNormal", "botaoModoInfinito", "botaoVoltarModos");
+        }
+        else
+        {
+            VerificarCampos(linhas, cena.name, menus[0], "painelCenarios", "botaoIniciarSobrevivencia", "botaoVoltarCenarios");
+            var cartoes = TodosOsComponentes<CartaoDeCenario>(cena);
+            Verificar(linhas, cena.name, "dois cenarios com miniaturas", cartoes.Length == 2
+                && cartoes.All(c => SemReferenciaNula(c, null)));
+        }
     }
 
     static void ValidarFase(Scene cena, string caminho, List<string> linhas)

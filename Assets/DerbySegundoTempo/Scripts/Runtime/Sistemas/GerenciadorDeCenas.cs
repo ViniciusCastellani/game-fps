@@ -5,6 +5,8 @@ public class GerenciadorDeCenas : MonoBehaviour
 {
     public const string PrimeiraFase = "Estadio_TPS_Backup_Visual";
     public const string SegundaFase = "Rua_TPS";
+    public const string CenaDeModos = "SelecaoDeModo";
+    public const string CenaDeCenarios = "SelecaoDeCenario";
 
     public string nomeDaProximaFase = PrimeiraFase;
     public string nomeDaTelaInicial = "TelaInicial";
@@ -55,8 +57,13 @@ public class GerenciadorDeCenas : MonoBehaviour
     public void VoltarParaEscolhaDeCenario()
     {
         SessaoDeJogo.DefinirNormal();
-        SessaoDeJogo.PedirEscolhaDeCenario();
-        Carregar(nomeDaTelaInicial, true);
+        Carregar(CenaDeCenarios, true);
+    }
+
+    public void AbrirSelecaoDeModo()
+    {
+        SessaoDeJogo.DefinirNormal();
+        Carregar(CenaDeModos, true);
     }
 
     void Carregar(string cena, bool reiniciarHordas)
