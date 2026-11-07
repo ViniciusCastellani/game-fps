@@ -13,6 +13,22 @@ A vitoria em uma horda oferece **Proxima Horda**. A ultima horda do estadio ofer
 
 As cenas anteriores `Estadio_Futebol` e `Estadio_TPS` ficam em `Cenas/Arquivo`, fora da lista de build.
 
+## Modos de jogo
+
+Fluxo: `TelaInicial` > **INICIAR** > **NORMAL** (campanha estadio e rua, como antes) ou **INFINITO** > escolha do cenario (**Estadio** ou **Rua**) > **Iniciar sobrevivencia**. Esc volta uma tela nos menus.
+
+Regras do modo Infinito:
+
+- O tutorial abre em toda partida; o tempo e os inimigos so comecam ao fechar o tutorial.
+- Os inimigos nascem sem parar, com limite de vivos ao mesmo tempo e um PigMan periodico.
+- O HUD mostra o tempo de sobrevivencia e os abates; o cronometro e o contador de ordas do modo Normal ficam ocultos.
+- Os pontos continuam sendo gastos nas estacoes. O placar final soma todos os pontos conquistados, mesmo os gastos.
+- Ao morrer, a tela de resultado mostra cenario, pontos, abates e tempo, com os botoes **Tentar novamente**, **Escolher cenario** e **Menu inicial**.
+
+Ajustes: em cada fase, `00_Sistemas/ModoInfinito` > `GeradorDeInimigosInfinito`. Padroes: intervalo inicial 3 s, minimo 1,2 s, reducao de 0,6 s por minuto, 3 inimigos no inicio, no maximo 12 vivos, um PigMan a cada 90 s (no maximo 1 vivo) e pontos de spawn a pelo menos 8 m do jogador.
+
+O modo Normal nao muda e e o padrao ao abrir uma fase direto no editor: o modo Infinito so vale quando escolhido pelo menu.
+
 ## Pastas
 
 - `Cenas/Menus`, `Cenas/Fases`, `Cenas/Arquivo`: cenas e seus dados de navegacao.
@@ -51,7 +67,27 @@ Objetos que pertencem a prefabs continuam vinculados a eles. Os inimigos instanc
 
 - `Derby > Projeto > Validar campanha e organizacao`: testa menu, hordas, troca de fase, pausa, vitoria final e reinicio.
 - `Derby > Projeto > Organizar projeto e implementar Rua TPS`: migracao inicial; com a estrutura nova existente, apenas confirma a lista de build.
+- `Derby > Modos de Jogo > Montar menus e modo infinito`: monta os menus em `TelaInicial` e o modo Infinito nas duas fases (pode ser repetido sem duplicar objetos).
+- `Derby > Modos de Jogo > Validar modos de jogo`: confere as cenas e roda os testes de Play Mode dos modos de jogo e da campanha. Relatorios em `Library/ModosDeJogo`.
 - `Tools/test_cenario_tps.py`: verificacoes de geometria e referencias do estadio.
+
+Comandos de terminal (feche o Editor antes; em maquina sem tela use `xvfb-run -a` na frente do segundo e do terceiro):
+
+```bash
+UNITY=~/Unity/Hub/Editor/6000.5.10f1/Editor/Unity
+PROJ=/home/salzani/Documents/college/games/game-fps
+mkdir -p "$PROJ/Library/ModosDeJogo"
+# montar menus e modo infinito
+"$UNITY" -batchmode -projectPath "$PROJ" -executeMethod MontadorModosDeJogo.MontarTudo \
+  -logFile "$PROJ/Library/ModosDeJogo/montagem.log" -quit
+# testes dos modos e regressao da campanha
+"$UNITY" -batchmode -projectPath "$PROJ" -runTests -testPlatform PlayMode \
+  -testFilter "ModosDeJogoTests;CampanhaTests;EstacoesRuaTests;PigManTests;GolEasterEggTests" \
+  -testResults "$PROJ/Library/ModosDeJogo/testes.xml" -logFile "$PROJ/Library/ModosDeJogo/testes.log"
+# regressao completa
+"$UNITY" -batchmode -projectPath "$PROJ" -runTests -testPlatform PlayMode \
+  -testResults "$PROJ/Library/ModosDeJogo/testes-completos.xml" -logFile "$PROJ/Library/ModosDeJogo/testes-completos.log"
+```
 
 A migracao usa `AssetDatabase.MoveAsset`, preservando os arquivos `.meta` e GUIDs. Os caminhos usados em scripts e ferramentas sao atualizados junto com as pastas. Relatorios e copias anteriores das quatro cenas ficam em `Library/Organizacao` (arquivos locais, fora do versionamento).
 

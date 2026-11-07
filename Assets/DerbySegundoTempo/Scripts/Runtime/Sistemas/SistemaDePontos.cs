@@ -7,6 +7,8 @@ public class SistemaDePontos : MonoBehaviour
 
     public int pontosAtuais;
 
+    public int PontosTotaisConquistados { get; private set; }
+
     public TMP_Text textoPontos;
 
     void Awake()
@@ -29,6 +31,7 @@ public class SistemaDePontos : MonoBehaviour
     public void AdicionarPontos(int quantidade)
     {
         pontosAtuais += quantidade;
+        if (quantidade > 0) PontosTotaisConquistados += quantidade;
         AtualizarTexto();
     }
 

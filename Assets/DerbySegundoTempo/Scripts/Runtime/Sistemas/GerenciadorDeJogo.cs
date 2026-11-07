@@ -42,6 +42,8 @@ public class GerenciadorDeJogo : MonoBehaviour
     [SerializeField] private AudioClip somDeVitoria;
     [SerializeField] private AudioClip somDeGameOver;
 
+    public event System.Action<EstadoDoJogo> AoMudarEstado;
+
     public EstadoDoJogo Estado { get; private set; }
 
     public bool EstaJogando
@@ -50,6 +52,26 @@ public class GerenciadorDeJogo : MonoBehaviour
     }
 
     private EstadoDoJogo estadoAntesDoTutorial = EstadoDoJogo.Jogando;
+
+    public void DefinirTutorialAoIniciar(bool mostrar)
+    {
+        mostrarTutorialAoIniciar = mostrar;
+    }
+
+    public void SubstituirTelaDeGameOver(GameObject novaTela)
+    {
+        if (novaTela == null)
+        {
+            return;
+        }
+
+        if (telaDeGameOver != null)
+        {
+            telaDeGameOver.SetActive(false);
+        }
+
+        telaDeGameOver = novaTela;
+    }
 
     void Start()
     {
@@ -243,6 +265,8 @@ public class GerenciadorDeJogo : MonoBehaviour
                 acao.enabled = jogando;
             }
         }
+
+        AoMudarEstado?.Invoke(novoEstado);
     }
     void Mostrar(GameObject tela, bool visivel)
     {

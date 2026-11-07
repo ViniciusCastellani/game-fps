@@ -12,8 +12,14 @@ public class GerenciadorDeCenas : MonoBehaviour
     public bool TemProximaFase => !string.IsNullOrWhiteSpace(nomeDaProximaFase)
         && nomeDaProximaFase != SceneManager.GetActiveScene().name;
 
+    public static bool EhCenaInfinitaValida(string cena)
+    {
+        return cena == PrimeiraFase || cena == SegundaFase;
+    }
+
     public void ProximaFase()
     {
+        SessaoDeJogo.DefinirNormal();
         Carregar(nomeDaProximaFase, true);
     }
     
@@ -24,12 +30,33 @@ public class GerenciadorDeCenas : MonoBehaviour
     
     public void VoltarParaTelaInicial()
     {
+        SessaoDeJogo.DefinirNormal();
         Carregar(nomeDaTelaInicial, true);
     }
 
     public void IniciarCampanha()
     {
+        SessaoDeJogo.DefinirNormal();
         Carregar(PrimeiraFase, true);
+    }
+
+    public void IniciarModoInfinito(string cena)
+    {
+        if (!EhCenaInfinitaValida(cena))
+        {
+            Debug.LogError("Cenario infinito invalido: " + cena, this);
+            return;
+        }
+
+        SessaoDeJogo.IniciarInfinito(cena);
+        Carregar(cena, true);
+    }
+
+    public void VoltarParaEscolhaDeCenario()
+    {
+        SessaoDeJogo.DefinirNormal();
+        SessaoDeJogo.PedirEscolhaDeCenario();
+        Carregar(nomeDaTelaInicial, true);
     }
 
     void Carregar(string cena, bool reiniciarHordas)

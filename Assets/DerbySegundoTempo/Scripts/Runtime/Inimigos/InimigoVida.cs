@@ -23,6 +23,11 @@ public class InimigoVida : MonoBehaviour
     [HideInInspector]
     public GerenciadorDeOrdas gerenciadorDeOrdas;
 
+    [System.NonSerialized]
+    public System.Action aoMorrer;
+
+    private bool morreu;
+
     public void ReceberDano(int dano)
     {
         vida -= dano;
@@ -42,6 +47,13 @@ public class InimigoVida : MonoBehaviour
 
     void Morrer()
     {
+        if (morreu)
+        {
+            return;
+        }
+
+        morreu = true;
+
         Instantiate(
             efeitoParticulaMorte,
             transform.position + offsetParticulaMorte,
@@ -64,6 +76,8 @@ public class InimigoVida : MonoBehaviour
         {
             gerenciadorDeOrdas.InimigoMorreu();
         }
+
+        aoMorrer?.Invoke();
 
         Destroy(gameObject);
     }
