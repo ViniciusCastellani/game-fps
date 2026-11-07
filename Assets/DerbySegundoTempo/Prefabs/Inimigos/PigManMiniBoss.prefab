@@ -455,19 +455,19 @@ AudioSource:
   OutputAudioMixerGroup: {fileID: 0}
   m_audioClip: {fileID: 0}
   m_Resource: {fileID: 0}
-  m_PlayOnAwake: 1
-  m_Volume: 0.48
+  m_PlayOnAwake: 0
+  m_Volume: 0.56
   m_Pitch: 1
   Loop: 0
   Mute: 0
   Spatialize: 0
   SpatializePostEffects: 0
   Priority: 128
-  DopplerLevel: 1
-  MinDistance: 0.9040108
-  MaxDistance: 500
+  DopplerLevel: 0
+  MinDistance: 3
+  MaxDistance: 28
   Pan2D: 0
-  rolloffMode: 0
+  rolloffMode: 1
   BypassEffects: 0
   BypassListenerEffects: 0
   BypassReverbZones: 0
@@ -500,7 +500,7 @@ AudioSource:
     m_Curve:
     - serializedVersion: 3
       time: 0
-      value: 0
+      value: 1
       inSlope: 0
       outSlope: 0
       tangentMode: 0
@@ -621,7 +621,10 @@ MonoBehaviour:
   tempoEntreAtaques: 1.2
   velocidadeDeGiro: 8
   fonteDeAudio: {fileID: 7097590589589035946}
-  somDeAtaque: {fileID: 8300000, guid: 384b9d792374c714a8ec14cddd7d655e, type: 3}
+  somDeAtaque: {fileID: 8300000, guid: 24d8939b2f475492bcd47e2716b2b686, type: 3}
+  somDoGolpe: {fileID: 8300000, guid: 51014074558c547ab47ae8d91b6d2cb5, type: 3}
+  destacarSomDeAcerto: 1
+  volumeDoAcerto: 0.85
   animator: {fileID: 2848753616700946723}
   nomeDoTriggerDeAtaque: Atacar
 --- !u!114 &3616985109832734369
@@ -637,12 +640,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::InimigoSomDePassos
   sonsDePasso:
-  - {fileID: 8300000, guid: 10e1e96145f0219488c7c2897679106d, type: 3}
-  volume: 0.9
+  - {fileID: 8300000, guid: 41a74ccd36e95491b67326780f95cb1d, type: 3}
+  - {fileID: 8300000, guid: 5669f6d8c44655ddae4a3e1327ec2356, type: 3}
+  - {fileID: 8300000, guid: e6f56ff4ce31586399067db72db417ea, type: 3}
+  volume: 0.82
   intervaloEntrePassos: 0.7
   velocidadeMinima: 0.3
-  distanciaMinima: 2
-  distanciaMaxima: 25
+  distanciaMinima: 3
+  distanciaMaxima: 28
 --- !u!114 &7392302141234689265
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -313,6 +313,40 @@ public static class InstaladorPigMan
         return controller;
     }
 
+    static void ConfigurarSons(GameObject raiz)
+    {
+        const string pastaAudio = "Assets/DerbySegundoTempo/Audio/PigMan/";
+        AudioClip Carregar(string nome)
+        {
+            var clipe = AssetDatabase.LoadAssetAtPath<AudioClip>(pastaAudio + nome + ".wav");
+            if (clipe == null) throw new InvalidOperationException("Som do PigMan ausente: " + nome);
+            return clipe;
+        }
+
+        var ataque = raiz.GetComponent<InimigoAtaque>();
+        ataque.somDoGolpe = Carregar("PigMan_GolpeEspada");
+        ataque.somDeAtaque = Carregar("PigMan_AtaqueSucedido");
+        ataque.destacarSomDeAcerto = true;
+        ataque.volumeDoAcerto = .85f;
+        var fonte = ataque.fonteDeAudio;
+        fonte.playOnAwake = false;
+        fonte.volume = .56f;
+        fonte.spatialBlend = 1f;
+        fonte.rolloffMode = AudioRolloffMode.Linear;
+        fonte.minDistance = 3f;
+        fonte.maxDistance = 28f;
+        fonte.dopplerLevel = 0f;
+
+        var passos = raiz.GetComponent<InimigoSomDePassos>();
+        passos.sonsDePasso = new[] {
+            Carregar("PigMan_PassoPesado01"), Carregar("PigMan_PassoPesado02"), Carregar("PigMan_PassoPesado03")
+        };
+        passos.volume = .82f;
+        passos.intervaloEntrePassos = .7f;
+        passos.distanciaMinima = 3f;
+        passos.distanciaMaxima = 28f;
+    }
+
     static GameObject CriarPrefab(AnimatorController controller, Dictionary<string, Material> materiais)
     {
         var raiz = PrefabUtility.LoadPrefabContents(Porco);
@@ -386,7 +420,7 @@ public static class InstaladorPigMan
             ataque.duracaoDaAnimacao = ((AnimationClip)controller.layers[0].stateMachine.states.Single(s => s.state.name == "GolpeDeEspada").state.motion).length / .8f + .12f;
             ataque.tempoEntreAtaques = 1.2f;
             raiz.AddComponent<PigManAnimador>().animator = animator;
-            raiz.GetComponent<InimigoSomDePassos>().intervaloEntrePassos = .7f;
+            ConfigurarSons(raiz);
             barra.transform.localPosition = new Vector3(0, 3.8f, 0);
             barra.transform.localScale = Vector3.one * .065f;
             barra.gameObject.AddComponent<OlharParaCamera>();

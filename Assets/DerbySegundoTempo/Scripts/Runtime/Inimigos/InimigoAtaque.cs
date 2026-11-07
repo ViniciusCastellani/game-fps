@@ -28,8 +28,15 @@ public class InimigoAtaque : MonoBehaviour
     [Header("Referências")]
     public AudioSource fonteDeAudio;
     public AudioClip somDeAtaque;
+    [Tooltip("Opcional: preparo e corte tocados no início da animação, mesmo se o jogador esquivar.")]
+    public AudioClip somDoGolpe;
     public Animator animator;
     public string nomeDoTriggerDeAtaque = "Atacar";
+
+    [Header("Audio do dano ao jogador")]
+    [Tooltip("Interrompe o corte ao acertar e toca o impacto em uma fonte 2D independente.")]
+    public bool destacarSomDeAcerto;
+    [Range(0f, 1f)] public float volumeDoAcerto = 0.85f;
 
     private Transform jogador;
     private JogadorVida vidaDoJogador;
@@ -104,16 +111,22 @@ public class InimigoAtaque : MonoBehaviour
             animator.SetTrigger(nomeDoTriggerDeAtaque);
         }
 
+        if (fonteDeAudio != null && somDoGolpe != null)
+        {
+            fonteDeAudio.PlayOneShot(somDoGolpe);
+        }
+
         yield return new WaitForSeconds(atrasoDoDano);
 
         if (JogadorEstaNaZonaDeAcerto())
         {
+            int vidaAntesDoGolpe = vidaDoJogador.vidaAtual;
             vidaDoJogador.ReceberDano(dano);
-            Debug.Log(gameObject.name + " acertou o jogador causando " + dano + " de dano.");
 
-            if (fonteDeAudio != null && somDeAtaque != null)
+            if (vidaDoJogador.vidaAtual < vidaAntesDoGolpe)
             {
-                fonteDeAudio.PlayOneShot(somDeAtaque);
+                TocarSomDeAcerto();
+                Debug.Log(gameObject.name + " acertou o jogador causando " + dano + " de dano.");
             }
         }
 
@@ -122,6 +135,35 @@ public class InimigoAtaque : MonoBehaviour
 
         atacando = false;
         proximoAtaquePermitidoEm = Time.time + tempoEntreAtaques;
+    }
+
+    void TocarSomDeAcerto()
+    {
+        if (somDeAtaque == null) return;
+
+        if (!destacarSomDeAcerto)
+        {
+            if (fonteDeAudio != null) fonteDeAudio.PlayOneShot(somDeAtaque);
+            return;
+        }
+
+        // O impacto tem prioridade sobre a cauda do corte da espada.
+        if (fonteDeAudio != null && somDoGolpe != null) fonteDeAudio.Stop();
+
+        // Feedback de dano sem atenuacao pela camera. Nao e filho do inimigo:
+        // o acerto termina de tocar mesmo se o PigMan morrer neste mesmo quadro.
+        var objetoDoSom = new GameObject("SomDeAcertoInimigo");
+        objetoDoSom.transform.position = vidaDoJogador.transform.position;
+        AudioSource fonteDoAcerto = objetoDoSom.AddComponent<AudioSource>();
+        fonteDoAcerto.playOnAwake = false;
+        fonteDoAcerto.loop = false;
+        fonteDoAcerto.spatialBlend = 0f;
+        fonteDoAcerto.priority = 64;
+        fonteDoAcerto.volume = volumeDoAcerto;
+        if (fonteDeAudio != null) fonteDoAcerto.outputAudioMixerGroup = fonteDeAudio.outputAudioMixerGroup;
+        fonteDoAcerto.clip = somDeAtaque;
+        fonteDoAcerto.Play();
+        Destroy(objetoDoSom, somDeAtaque.length + 0.1f);
     }
 
     bool JogadorEstaNaZonaDeAcerto()

@@ -16,6 +16,7 @@ public class IluminacaoPorOrda : MonoBehaviour
         public Color solo;
         public Color tonalidadeSkybox;
         [Range(0f, 5f)] public float exposicaoSkybox = 1.3f;
+        [Range(0f, 1f)] public float luzesArtificiais;
     }
 
     public Light sol;
@@ -31,6 +32,18 @@ public class IluminacaoPorOrda : MonoBehaviour
         ceu = new Color(.4f, .39f, .5f), horizonte = new Color(.63f, .38f, .24f),
         solo = new Color(.24f, .19f, .16f), tonalidadeSkybox = new Color(.7f, .36f, .21f), exposicaoSkybox = 1.05f
     };
+
+    [Header("Ciclo da rua no modo normal")]
+    public bool tardeENoite;
+    public Periodo noite = new Periodo {
+        rotacaoSol = new Vector3(38, 65, 0), corSol = new Color(.64f, .75f, 1f), intensidadeSol = .55f,
+        ceu = new Color(.16f, .21f, .32f), horizonte = new Color(.13f, .17f, .25f),
+        solo = new Color(.075f, .095f, .14f), tonalidadeSkybox = new Color(.08f, .12f, .24f),
+        exposicaoSkybox = .28f, luzesArtificiais = 1f
+    };
+    public Light[] luzesDosPostes = new Light[0];
+    [Min(0f)] public float intensidadeDosPostes = 18f;
+    float nivelDosPostes;
 
     Material skyboxOriginal;
     Material skyboxInstanciado;
@@ -52,7 +65,10 @@ public class IluminacaoPorOrda : MonoBehaviour
         PrepararSkybox();
         if (transicao != null) StopCoroutine(transicao);
         transicao = null;
-        Periodo alvo = numero <= 1 ? dia : tarde;
+        bool cicloNoturno = tardeENoite && (!Application.isPlaying || !SessaoDeJogo.EhInfinitoNaCena(gameObject.scene.name));
+        int ultimaHorda = gerenciadorDeOrdas != null && gerenciadorDeOrdas.ordas != null
+            ? Mathf.Max(2, gerenciadorDeOrdas.ordas.Length) : 2;
+        Periodo alvo = cicloNoturno ? (numero >= ultimaHorda ? noite : tarde) : (numero <= 1 ? dia : tarde);
         if (imediato || duracaoTransicao <= 0f)
         {
             Aplicar(alvo, alvo, 1f);
@@ -61,7 +77,7 @@ public class IluminacaoPorOrda : MonoBehaviour
         var origem = new Periodo {
             rotacaoSol = sol.transform.eulerAngles, corSol = sol.color, intensidadeSol = sol.intensity,
             ceu = RenderSettings.ambientSkyColor, horizonte = RenderSettings.ambientEquatorColor,
-            solo = RenderSettings.ambientGroundColor,
+            solo = RenderSettings.ambientGroundColor, luzesArtificiais = nivelDosPostes,
             tonalidadeSkybox = skyboxInstanciado != null && skyboxInstanciado.HasProperty("_SkyTint")
                 ? skyboxInstanciado.GetColor("_SkyTint") : alvo.tonalidadeSkybox,
             exposicaoSkybox = skyboxInstanciado != null && skyboxInstanciado.HasProperty("_Exposure")
@@ -102,6 +118,13 @@ public class IluminacaoPorOrda : MonoBehaviour
         RenderSettings.ambientSkyColor = Color.Lerp(origem.ceu, alvo.ceu, t);
         RenderSettings.ambientEquatorColor = Color.Lerp(origem.horizonte, alvo.horizonte, t);
         RenderSettings.ambientGroundColor = Color.Lerp(origem.solo, alvo.solo, t);
+        nivelDosPostes = Mathf.Lerp(origem.luzesArtificiais, alvo.luzesArtificiais, t);
+        foreach (Light poste in luzesDosPostes)
+        {
+            if (poste == null) continue;
+            poste.enabled = nivelDosPostes > .001f;
+            poste.intensity = intensidadeDosPostes * nivelDosPostes;
+        }
         if (skyboxInstanciado == null) return;
         if (skyboxInstanciado.HasProperty("_SkyTint"))
             skyboxInstanciado.SetColor("_SkyTint", Color.Lerp(origem.tonalidadeSkybox, alvo.tonalidadeSkybox, t));

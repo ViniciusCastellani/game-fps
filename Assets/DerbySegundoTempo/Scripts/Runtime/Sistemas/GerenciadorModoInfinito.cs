@@ -5,7 +5,7 @@ using TMPro;
 
 public class GerenciadorModoInfinito : MonoBehaviour
 {
-    public const string TextoObjetivoInfinito = "<b><color=#FFC629>OBJETIVO</color></b>   Elimine todos os inimigos de cada horda para avançar. As hordas não têm limite; a partida termina quando sua vida chega a zero.\nGaste pontos nas estações. O resultado soma todos os pontos conquistados, mesmo os gastos, os abates e as hordas concluídas.";
+    public const string TextoObjetivoInfinito = "<b><color=#FFC629>OBJETIVO</color></b>   Sobreviva a hordas sem limite até sua vida acabar.\nElimine todos os inimigos para avançar. Use pontos nas estações.\nPlacar: pontos totais coletados (incluindo os gastos), abates e hordas concluídas.";
 
     [SerializeField] private string nomeDoCenario = "Estádio";
 
@@ -98,10 +98,7 @@ public class GerenciadorModoInfinito : MonoBehaviour
         gerenciadorDeJogo.DefinirTutorialAoIniciar(true);
         gerenciadorDeJogo.SubstituirTelaDeGameOver(telaDeResultado);
 
-        if (textoObjetivoTutorial != null)
-        {
-            textoObjetivoTutorial.text = TextoObjetivoInfinito;
-        }
+        AjustarObjetivoTutorial();
 
         hudInfinito.SetActive(true);
         telaDeResultado.SetActive(false);
@@ -110,6 +107,32 @@ public class GerenciadorModoInfinito : MonoBehaviour
         gerenciadorDeJogo.AoMudarEstado += AoMudarEstado;
 
         AtualizarHUD(true);
+    }
+
+    void OnEnable()
+    {
+        if (Ativo) AjustarObjetivoTutorial();
+    }
+
+    void AjustarObjetivoTutorial()
+    {
+        if (textoObjetivoTutorial == null) return;
+
+        // Reserva o rodape interno do painel, abaixo do separador dos comandos.
+        RectTransform caixa = textoObjetivoTutorial.rectTransform;
+        caixa.anchorMin = Vector2.zero;
+        caixa.anchorMax = new Vector2(1f, 0f);
+        caixa.pivot = new Vector2(0.5f, 0f);
+        caixa.anchoredPosition = new Vector2(0f, 24f);
+        caixa.sizeDelta = new Vector2(-104f, 128f);
+
+        textoObjetivoTutorial.text = TextoObjetivoInfinito;
+        textoObjetivoTutorial.margin = new Vector4(4f, 4f, 4f, 4f);
+        textoObjetivoTutorial.alignment = TextAlignmentOptions.TopLeft;
+        textoObjetivoTutorial.textWrappingMode = TextWrappingModes.Normal;
+        textoObjetivoTutorial.enableAutoSizing = true;
+        textoObjetivoTutorial.fontSizeMin = 22f;
+        textoObjetivoTutorial.fontSizeMax = 25f;
     }
 
     void OnDestroy()
