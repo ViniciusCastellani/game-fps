@@ -128,8 +128,8 @@ public static class MontadorDeTelasIlustradas
             new Color(CorOuro.r, CorOuro.g, CorOuro.b, 0.30f));
 
         const float LarguraColuna = 550f;
-        const float Passo = 82f;
-        const float PrimeiraLinha = 140f;
+        const float Passo = 68f;
+        const float PrimeiraLinha = 152f;
 
         string[,] coluna1 =
         {
@@ -143,6 +143,7 @@ public static class MontadorDeTelasIlustradas
         string[,] coluna2 =
         {
             { "CLIQUE ESQ.", "Atirar" },
+            { "CLIQUE DIR.", "Alternar entre 1ª e 3ª pessoa" },
             { "R", "Recarregar a arma" },
             { "E", "Usar estações de cura e munição" },
             { "1  2  3", "Comprar upgrades com pontos" },
@@ -155,10 +156,22 @@ public static class MontadorDeTelasIlustradas
         CriarBarra(painel.transform, "Separador2", new Vector2(0f, -240f), new Vector2(1060f, 2f),
             new Color(CorOuro.r, CorOuro.g, CorOuro.b, 0.30f));
 
-        CriarTexto(painel.transform, "Objetivo",
+        TMP_Text objetivo = CriarTexto(painel.transform, "Objetivo",
             "<b><color=#FFC629>OBJETIVO</color></b>   Elimine todos os inimigos da orda antes do cronômetro zerar.\n"
             + "Cada inimigo abatido rende pontos para gastar em cura, dano e capacidade do pente.",
             25, CorTextoClaro, new Vector2(0f, -292f), new Vector2(1100f, 70f), FontStyles.Normal);
+        // Reserva o rodapé interno para o objetivo, inclusive as três linhas do modo infinito.
+        objetivo.rectTransform.anchorMin = Vector2.zero;
+        objetivo.rectTransform.anchorMax = new Vector2(1f, 0f);
+        objetivo.rectTransform.pivot = new Vector2(0.5f, 0f);
+        objetivo.rectTransform.anchoredPosition = new Vector2(0f, 24f);
+        objetivo.rectTransform.sizeDelta = new Vector2(-104f, 128f);
+        objetivo.margin = new Vector4(4f, 4f, 4f, 4f);
+        objetivo.alignment = TextAlignmentOptions.TopLeft;
+        objetivo.textWrappingMode = TextWrappingModes.Normal;
+        objetivo.enableAutoSizing = true;
+        objetivo.fontSizeMin = 22f;
+        objetivo.fontSizeMax = 25f;
 
         CriarBotao(tela.transform, "BotaoComecar", "COMEÇAR A PARTIDA", new Vector2(300f, -452f),
             new Vector2(460f, 82f), CorBotao, CorBotaoClaro, CorBotaoEscuro, CorTextoBotao,
@@ -226,7 +239,7 @@ public static class MontadorDeTelasIlustradas
         rectDescricao.sizeDelta = new Vector2(largura - LarguraBadge - 16f, Altura);
         textoDescricao.alignment = TextAlignmentOptions.Left;
 
-        textoDescricao.textWrappingMode = TextWrappingModes.NoWrap;
+        textoDescricao.textWrappingMode = TextWrappingModes.Normal;
         textoDescricao.enableAutoSizing = true;
         textoDescricao.fontSizeMin = 19f;
         textoDescricao.fontSizeMax = 26f;
