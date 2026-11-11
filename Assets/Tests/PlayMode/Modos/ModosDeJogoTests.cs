@@ -1,6 +1,7 @@
 #if UNITY_EDITOR
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Text.RegularExpressions;
@@ -18,7 +19,7 @@ using Object = UnityEngine.Object;
 public class ModosDeJogoTests
 {
     const string Cenas = "Assets/DerbySegundoTempo/Cenas/";
-    const string Estadio = "Estadio_TPS_Backup_Visual";
+    const string Estadio = "Estadio_TPS";
     const string Rua = "Rua_TPS";
     const string CartaoEstadio = "Assets/DerbySegundoTempo/Arte/Imagens/Interface/Cenarios/cartao_estadio.png";
     const string CartaoRua = "Assets/DerbySegundoTempo/Arte/Imagens/Interface/Cenarios/cartao_rua.png";
@@ -264,18 +265,60 @@ public class ModosDeJogoTests
     [UnityTest]
     public IEnumerator MenuNavegaEntreTelas()
     {
+        BaseInputModule entrada = null;
+        void SuspenderEntradaDaCena(Scene cena, LoadSceneMode modo)
+        {
+            entrada = cena.GetRootGameObjects()
+                .SelectMany(objeto => objeto.GetComponentsInChildren<BaseInputModule>()).Single();
+            entrada.enabled = false;
+        }
+
+        SceneManager.sceneLoaded += SuspenderEntradaDaCena;
+        try
+        {
+            yield return ConferirNavegacaoDoMenu();
+        }
+        finally
+        {
+            SceneManager.sceneLoaded -= SuspenderEntradaDaCena;
+            if (entrada != null) entrada.enabled = true;
+        }
+    }
+
+    static IEnumerator ConferirNavegacaoDoMenu()
+    {
         yield return IrParaTelaInicial();
         Assert.AreEqual("Principal", TelaDoMenu());
         Assert.IsFalse(EncontrarTodos("CartaoDeCenario").Any());
         var iniciar = Botao("BotaoIniciar");
+        var sair = Botao("BotaoSair");
         Assert.AreEqual(iniciar.gameObject, Selecionado());
         Assert.AreEqual(1, iniciar.onClick.GetPersistentEventCount());
         Assert.AreEqual("AbrirEscolhaDeModo", iniciar.onClick.GetPersistentMethodName(0));
-        Assert.AreEqual("Sair", Botao("BotaoSair").onClick.GetPersistentMethodName(0));
-        Assert.AreEqual(Botao("BotaoSair"), iniciar.navigation.selectOnDown);
-        Assert.AreEqual(iniciar, Botao("BotaoSair").navigation.selectOnUp);
+        Assert.AreEqual("Sair", sair.onClick.GetPersistentMethodName(0));
+        Assert.AreEqual(sair, iniciar.navigation.selectOnDown);
+        Assert.AreEqual(iniciar, sair.navigation.selectOnUp);
 
-        iniciar.onClick.Invoke();
+        var eventos = EventSystem.current;
+        var ponteiro = new PointerEventData(eventos) { button = PointerEventData.InputButton.Left };
+        var resultados = new List<RaycastResult>();
+        GameObject AlvoDoClique(Vector2 posicao)
+        {
+            ponteiro.position = posicao;
+            eventos.RaycastAll(ponteiro, resultados);
+            return resultados.FirstOrDefault().gameObject;
+        }
+
+        Assert.IsNotNull(iniciar.image.sprite);
+        Assert.IsNotNull(sair.image.sprite);
+        Vector2 centroIniciar = RectTransformUtility.WorldToScreenPoint(null, iniciar.image.rectTransform.position);
+        Vector2 centroSair = RectTransformUtility.WorldToScreenPoint(null, sair.image.rectTransform.position);
+        Assert.AreEqual(sair.gameObject, AlvoDoClique(centroSair));
+        Assert.IsNull(AlvoDoClique(Vector2.Lerp(centroIniciar, centroSair, 0.5f)));
+
+        GameObject alvoIniciar = AlvoDoClique(centroIniciar);
+        Assert.AreEqual(iniciar.gameObject, alvoIniciar);
+        ExecuteEvents.Execute(alvoIniciar, ponteiro, ExecuteEvents.pointerClickHandler);
         yield return EsperarCena("SelecaoDeModo");
         Assert.AreEqual("Modos", TelaDoMenu());
         Assert.AreEqual(Botao("BotaoModoNormal").gameObject, Selecionado());

@@ -3,7 +3,7 @@ using UnityEngine.SceneManagement;
 
 public class GerenciadorDeCenas : MonoBehaviour
 {
-    public const string PrimeiraFase = "Estadio_TPS_Backup_Visual";
+    public const string PrimeiraFase = "Estadio_TPS";
     public const string SegundaFase = "Rua_TPS";
     public const string CenaDeModos = "SelecaoDeModo";
     public const string CenaDeCenarios = "SelecaoDeCenario";

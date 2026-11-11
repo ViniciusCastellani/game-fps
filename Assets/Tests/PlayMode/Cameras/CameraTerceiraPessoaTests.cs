@@ -25,7 +25,7 @@ public class CameraTerceiraPessoaTests
     [UnitySetUp]
     public IEnumerator Preparar()
     {
-        yield return EditorSceneManager.LoadSceneAsyncInPlayMode(Cenas + "Fases/Estadio_TPS_Backup_Visual.unity", new LoadSceneParameters(LoadSceneMode.Single));
+        yield return EditorSceneManager.LoadSceneAsyncInPlayMode(Cenas + "Fases/Estadio_TPS.unity", new LoadSceneParameters(LoadSceneMode.Single));
         yield return null;
         var raizes = SceneManager.GetActiveScene().GetRootGameObjects();
         var original = raizes.SelectMany(r => r.GetComponentsInChildren<CinemachineThirdPersonFollow>(true)).Single();
@@ -188,7 +188,7 @@ public class CameraTerceiraPessoaTests
     [UnityTest]
     public IEnumerator ConfiguracaoAplicadaAoEstadioERua()
     {
-        foreach (string nome in new[] { "Estadio_TPS_Backup_Visual", "Rua_TPS" })
+        foreach (string nome in new[] { "Estadio_TPS", "Rua_TPS" })
         {
             yield return EditorSceneManager.LoadSceneAsyncInPlayMode(Cenas + "Fases/" + nome + ".unity", new LoadSceneParameters(LoadSceneMode.Single));
             yield return null;

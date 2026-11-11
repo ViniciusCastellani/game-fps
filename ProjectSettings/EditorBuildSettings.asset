@@ -9,7 +9,7 @@ EditorBuildSettings:
     path: Assets/DerbySegundoTempo/Cenas/Menus/TelaInicial.unity
     guid: 8ea8c1ef99b73aa4d84b568ef5a8428d
   - enabled: 1
-    path: Assets/DerbySegundoTempo/Cenas/Fases/Estadio_TPS_Backup_Visual.unity
+    path: Assets/DerbySegundoTempo/Cenas/Fases/Estadio_TPS.unity
     guid: 23008ed662aa5467b7ad05060d2166c6
   - enabled: 1
     path: Assets/DerbySegundoTempo/Cenas/Fases/Rua_TPS.unity

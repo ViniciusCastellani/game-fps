@@ -86,14 +86,14 @@ public class CampanhaTests
     {
         CollectionAssert.AreEqual(new[]
         {
-            Cenas + "Menus/TelaInicial.unity", Cenas + "Fases/Estadio_TPS_Backup_Visual.unity",
+            Cenas + "Menus/TelaInicial.unity", Cenas + "Fases/Estadio_TPS.unity",
             Cenas + "Fases/Rua_TPS.unity", Cenas + "Menus/TelaPausa.unity",
             Cenas + "Menus/SelecaoDeModo.unity", Cenas + "Menus/SelecaoDeCenario.unity"
         }, EditorBuildSettings.scenes.Where(x => x.enabled).Select(x => x.path).ToArray());
         yield return EditorSceneManager.LoadSceneAsyncInPlayMode(Cenas + "Menus/TelaInicial.unity", new LoadSceneParameters(LoadSceneMode.Single));
         yield return null;
         Chamar(Encontrar("GerenciadorDeCenas"), "ProximaFase");
-        yield return EsperarCena("Estadio_TPS_Backup_Visual");
+        yield return EsperarCena("Estadio_TPS");
         ConferirCenaJogavel();
         yield return ConcluirHordas();
         Chamar(Encontrar("GerenciadorDeJogo"), "ProximaFase");
@@ -109,7 +109,7 @@ public class CampanhaTests
         yield return ConcluirHordas();
         Assert.IsFalse((bool)Propriedade(Encontrar("GerenciadorDeCenas"), "TemProximaFase"));
         Chamar(Encontrar("GerenciadorDeJogo"), "ProximaFase");
-        yield return EsperarCena("Estadio_TPS_Backup_Visual");
+        yield return EsperarCena("Estadio_TPS");
         Assert.AreEqual(1, Propriedade(Encontrar("GerenciadorDeOrdas"), "NumeroDaOrdaAtual"));
         // O checkpoint de uma horda vale somente para reiniciar a mesma cena.
         jogo = Encontrar("GerenciadorDeJogo");
@@ -125,7 +125,7 @@ public class CampanhaTests
         yield return EsperarCena("TelaInicial");
         Assert.AreEqual(1f, Time.timeScale);
         Chamar(Encontrar("GerenciadorDeCenas"), "ProximaFase");
-        yield return EsperarCena("Estadio_TPS_Backup_Visual");
+        yield return EsperarCena("Estadio_TPS");
         Assert.AreEqual(1, Propriedade(Encontrar("GerenciadorDeOrdas"), "NumeroDaOrdaAtual"));
     }
 

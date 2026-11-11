@@ -173,7 +173,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bd96b9652a39677dfa2d8463aa587cfe, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GerenciadorDeCenas
-  nomeDaProximaFase: Estadio_TPS_Backup_Visual
+  nomeDaProximaFase: Estadio_TPS
   nomeDaTelaInicial: TelaInicial
 --- !u!4 &8273372
 Transform:

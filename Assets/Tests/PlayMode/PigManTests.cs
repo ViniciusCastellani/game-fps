@@ -132,7 +132,7 @@ public class PigManTests
     }
 
     [UnityTest]
-    public IEnumerator EstadioTemUmMiniBossApenasNaHordaDois() => ConferirHordas("Estadio_TPS_Backup_Visual");
+    public IEnumerator EstadioTemUmMiniBossApenasNaHordaDois() => ConferirHordas("Estadio_TPS");
 
     [UnityTest]
     public IEnumerator RuaTemUmMiniBossApenasNaHordaDois() => ConferirHordas("Rua_TPS");

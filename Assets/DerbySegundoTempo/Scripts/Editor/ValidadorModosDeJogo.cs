@@ -16,7 +16,7 @@ public static class ValidadorModosDeJogo
     const string CenaInicial = Raiz + "/Cenas/Menus/TelaInicial.unity";
     const string CenaModos = Raiz + "/Cenas/Menus/SelecaoDeModo.unity";
     const string CenaCenarios = Raiz + "/Cenas/Menus/SelecaoDeCenario.unity";
-    const string CenaEstadio = Raiz + "/Cenas/Fases/Estadio_TPS_Backup_Visual.unity";
+    const string CenaEstadio = Raiz + "/Cenas/Fases/" + GerenciadorDeCenas.PrimeiraFase + ".unity";
     const string CenaRua = Raiz + "/Cenas/Fases/Rua_TPS.unity";
     const string CaminhoPigMan = Raiz + "/Prefabs/Inimigos/PigManMiniBoss.prefab";
     const string Pasta = "Library/ModosDeJogo";
